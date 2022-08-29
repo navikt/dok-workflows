@@ -1,0 +1,49 @@
+name: Build and push
+
+on:
+  workflow_call:
+    inputs:
+      IMAGE:
+        required: true
+        type: string
+
+jobs:
+  build:
+    name: Build and push Docker image
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Create m2-settings
+        uses: whelk-io/maven-settings-xml-action@8a613be18185c8521e1501081adad5041840f2c8 # v20
+        with:
+          repositories: '[
+            { "id": "gpr-teamdokumenthandtering-avro-schemas", "name": "gpr-teamdokumenthandtering-avro-schemas", "url": "https://maven.pkg.github.com/navikt/teamdokumenthandtering-avro-schemas", "releases": { "enabled": "true" }, "snapshots": { "enabled": "false" } },
+            { "id": "confluent", "name": "confluent", "url": "https://packages.confluent.io/maven/" }
+          ]'
+          servers: '[
+            { "id": "gpr-teamdokumenthandtering-avro-schemas", "username": "${{ github.actor }}", "password": "${{ secrets.GITHUB_TOKEN }}" }]'
+          output_file: settings.xml
+      - name: Set up JDK17 and cache dependencies
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: 'maven'
+      - name: Download toolchain file
+        run: | 
+          curl https://raw.githubusercontent.com/navikt/dok-workflows/main/resources/toolchains.xml --output toolchains.xml
+      - name: Build with Maven
+        run: mvn --batch-mode --update-snapshots -s settings.xml --global-toolchains toolchains.xml package
+      - name: Login to Github Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          push: true
+          tags: ${{ inputs.IMAGE }}

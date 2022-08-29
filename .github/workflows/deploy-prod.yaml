@@ -1,0 +1,25 @@
+name: Build and push
+
+on:
+  workflow_call:
+    inputs:
+      IMAGE:
+        required: true
+        type: string
+      NAIS_VARIABLES:
+        required: true
+        type: string
+
+jobs:
+  deploy-to-nais:
+    name: Deploy to NAIS
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: nais/deploy/actions/deploy@v1
+        env:
+          APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
+          CLUSTER: prod-fss
+          RESOURCE: nais/naiserator.yaml
+          VARS: ${{ inputs.NAIS_VARIABLES }}
+          VAR: image=${{ inputs.IMAGE }}
