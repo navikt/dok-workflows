@@ -11,8 +11,8 @@ on:
         type: string
 
 jobs:
-  deploy-to-nais:
-    name: Deploy to NAIS
+  deploy-to-prod:
+    name: Deploy to prod-fss
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
