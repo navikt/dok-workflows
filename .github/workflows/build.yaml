@@ -19,7 +19,8 @@ jobs:
         with:
           repositories: '[
             { "id": "gpr-teamdokumenthandtering-avro-schemas", "name": "gpr-teamdokumenthandtering-avro-schemas", "url": "https://maven.pkg.github.com/navikt/teamdokumenthandtering-avro-schemas", "releases": { "enabled": "true" }, "snapshots": { "enabled": "false" } },
-            { "id": "confluent", "name": "confluent", "url": "https://packages.confluent.io/maven/" }
+            { "id": "confluent", "name": "confluent", "url": "https://packages.confluent.io/maven/" },
+            { "id": "nav-internal-nexus3", "url": "https://repo.adeo.no/repository/maven-releases/" }
           ]'
           servers: '[
             { "id": "gpr-teamdokumenthandtering-avro-schemas", "username": "${{ github.actor }}", "password": "${{ secrets.GITHUB_TOKEN }}" }]'
