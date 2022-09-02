@@ -6,9 +6,6 @@ on:
       IMAGE:
         required: true
         type: string
-      NAIS_VARIABLES:
-        required: true
-        type: string
 
 jobs:
   deploy-to-prod:
@@ -21,5 +18,5 @@ jobs:
           APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
           CLUSTER: prod-fss
           RESOURCE: nais/naiserator.yaml
-          VARS: ${{ inputs.NAIS_VARIABLES }}
+          VARS: p-config.yaml
           VAR: image=${{ inputs.IMAGE }}
