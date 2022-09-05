@@ -10,9 +10,9 @@ Fellesrepo med reusuable workflows i Github Actions som Team Dokumentløysingar 
 ## Døme på bruk av reusable workflows
 Alle døma under tek i bruk reusable workflows frå dette repoet.
 
-### Build
+### Build and publish
 ```
-name: Build and push
+name: Build and publish to ghcr
 
 on:
   push:
@@ -21,7 +21,7 @@ on:
 
 jobs:
   build:
-    uses: navikt/dok-workflows/.github/workflows/build.yaml@main
+    uses: navikt/dok-workflows/.github/workflows/build-and-publish.yaml@main
     with:
       IMAGE: ghcr.io/${{ github.repository }}:${{ github.sha }}
     secrets: inherit
