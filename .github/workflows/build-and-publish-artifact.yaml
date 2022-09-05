@@ -24,7 +24,6 @@ jobs:
         uses: whelk-io/maven-settings-xml-action@8a613be18185c8521e1501081adad5041840f2c8 # v20
         with:
           repositories: '[
-            { "id": "ghcr", "url": "https://maven.pkg.github.com/navikt/", "releases": { "enabled": "true" }, "snapshots": { "enabled": "false" } },
             { "id": "gpr-teamdokumenthandtering-avro-schemas", "name": "gpr-teamdokumenthandtering-avro-schemas", "url": "https://maven.pkg.github.com/navikt/teamdokumenthandtering-avro-schemas", "releases": { "enabled": "true" }, "snapshots": { "enabled": "false" } },
             { "id": "confluent", "name": "confluent", "url": "https://packages.confluent.io/maven/" }
           ]'
@@ -32,6 +31,10 @@ jobs:
               { "id": "ghcr", "username": "${{ github.actor }}", "password": "${{ secrets.GITHUB_TOKEN }}" },
               { "id": "gpr-teamdokumenthandtering-avro-schemas", "username": "${{ github.actor }}", "password": "${{ secrets.GITHUB_TOKEN }}" }
             ]'
+          profiles: '[
+            { "id": "ghcr", "name":"GHCR push profile", "url": "https://maven.pkg.github.com/navikt/" },
+          ]'
+
           active_profiles: '["ghcr"]'
           output_file: settings.xml
       - name: Set up JDK${{ inputs.JAVA_VERSION }} and cache dependencies
