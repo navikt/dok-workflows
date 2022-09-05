@@ -32,7 +32,7 @@ jobs:
               { "id": "gpr-teamdokumenthandtering-avro-schemas", "username": "${{ github.actor }}", "password": "${{ secrets.GITHUB_TOKEN }}" }
             ]'
           profiles: '[
-            { "id": "ghcr", "name":"GHCR push profile", "url": "https://maven.pkg.github.com/navikt/" },
+            { "id": "ghcr", "name":"GHCR push profile", "url": "https://maven.pkg.github.com/navikt/" }
           ]'
 
           active_profiles: '["ghcr"]'
