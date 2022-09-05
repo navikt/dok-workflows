@@ -32,6 +32,7 @@ jobs:
               { "id": "ghcr", "username": "${{ github.actor }}", "password": "${{ secrets.GITHUB_TOKEN }}" },
               { "id": "gpr-teamdokumenthandtering-avro-schemas", "username": "${{ github.actor }}", "password": "${{ secrets.GITHUB_TOKEN }}" }
             ]'
+          activeProfiles: '["ghcr"]'
           output_file: settings.xml
       - name: Set up JDK${{ inputs.JAVA_VERSION }} and cache dependencies
         uses: actions/setup-java@v3
