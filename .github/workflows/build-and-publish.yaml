@@ -27,7 +27,7 @@ jobs:
             { "id": "confluent", "url": "https://packages.confluent.io/maven/" }
           ]'
           servers: '[
-            { "id": "github", "username": "x-access-token", "password": "${{ secrets.READ_TOKEN }}" }
+            { "id": "github", "username": "x-access-token", "password": "${{ secrets.READER_TOKEN }}" }
           ]'
           output_file: settings.xml
       - name: Set up JDK${{ inputs.JAVA_VERSION }} and cache dependencies
