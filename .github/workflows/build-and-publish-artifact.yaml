@@ -1,0 +1,42 @@
+name: Build and publish artifact
+
+on:
+  workflow_call:
+    inputs:
+      JAVA_VERSION:
+        required: false
+        type: string
+        description: Java version to build with
+        default: '17'
+
+jobs:
+  build:
+    name: Build and publish to ghcr
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Create m2-settings
+        uses: whelk-io/maven-settings-xml-action@8a613be18185c8521e1501081adad5041840f2c8 # v20
+        with:
+          repositories: '[
+            { "id": "ghcr", "url": "https://maven.pkg.github.com/navikt/", "releases": { "enabled": "true" }, "snapshots": { "enabled": "false" } },
+            { "id": "gpr-teamdokumenthandtering-avro-schemas", "name": "gpr-teamdokumenthandtering-avro-schemas", "url": "https://maven.pkg.github.com/navikt/teamdokumenthandtering-avro-schemas", "releases": { "enabled": "true" }, "snapshots": { "enabled": "false" } },
+            { "id": "confluent", "name": "confluent", "url": "https://packages.confluent.io/maven/" }
+          ]'
+          servers: '[
+              { "id": "ghcr", "username": "${{ github.actor }}", "password": "${{ secrets.GITHUB_TOKEN }}" },
+              { "id": "gpr-teamdokumenthandtering-avro-schemas", "username": "${{ github.actor }}", "password": "${{ secrets.GITHUB_TOKEN }}" }
+            ]'
+          output_file: settings.xml
+      - name: Set up JDK${{ inputs.JAVA_VERSION }} and cache dependencies
+        uses: actions/setup-java@v3
+        with:
+          java-version: ${{ inputs.JAVA_VERSION }}
+          distribution: 'temurin'
+          cache: 'maven'
+      - name: Download toolchain file
+        run: |
+          curl https://raw.githubusercontent.com/navikt/dok-workflows/main/resources/toolchains.xml --output toolchains.xml
+      - name: Build with Maven
+        run: mvn --settings settings.xml --global-toolchains toolchains.xml deploy
