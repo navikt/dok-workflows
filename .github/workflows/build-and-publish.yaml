@@ -6,6 +6,11 @@ on:
       IMAGE:
         required: true
         type: string
+      JAVA_VERSION:
+        required: false
+        type: string
+        description: Java version to build with
+        default: '17'
 
 jobs:
   build:
@@ -24,10 +29,10 @@ jobs:
           servers: '[
             { "id": "gpr-teamdokumenthandtering-avro-schemas", "username": "${{ github.actor }}", "password": "${{ secrets.GITHUB_TOKEN }}" }]'
           output_file: settings.xml
-      - name: Set up JDK17 and cache dependencies
+      - name: Set up JDK${{ inputs.JAVA_VERSION }} and cache dependencies
         uses: actions/setup-java@v3
         with:
-          java-version: '17'
+          java-version: ${{ inputs.JAVA_VERSION }}
           distribution: 'temurin'
           cache: 'maven'
       - name: Download toolchain file
