@@ -20,14 +20,12 @@ jobs:
         uses: whelk-io/maven-settings-xml-action@8a613be18185c8521e1501081adad5041840f2c8 # v20
         with:
           repositories: '[
-            { "id": "ghcr", "url": "https://maven.pkg.github.com/navikt/", "releases": { "enabled": "true" }, "snapshots": { "enabled": "false" } },
-            { "id": "gpr-teamdokumenthandtering-avro-schemas", "name": "gpr-teamdokumenthandtering-avro-schemas", "url": "https://maven.pkg.github.com/navikt/teamdokumenthandtering-avro-schemas", "releases": { "enabled": "true" }, "snapshots": { "enabled": "false" } },
-            { "id": "confluent", "name": "confluent", "url": "https://packages.confluent.io/maven/" }
+            { "id": "github", "url": "https://maven.pkg.github.com/navikt/maven-release", "releases": { "enabled": "true" }, "snapshots": { "enabled": "false" } },
+            { "id": "confluent", "url": "https://packages.confluent.io/maven/" }
           ]'
           servers: '[
-              { "id": "ghcr", "username": "${{ github.actor }}", "password": "${{ secrets.GITHUB_TOKEN }}" },
-              { "id": "gpr-teamdokumenthandtering-avro-schemas", "username": "${{ github.actor }}", "password": "${{ secrets.GITHUB_TOKEN }}" }
-            ]'
+            { "id": "github", "username": "x-access-token", "password": "${{ secrets.READER_TOKEN }}" }
+          ]'
           output_file: settings.xml
       - name: Set up JDK${{ inputs.JAVA_VERSION }} and cache dependencies
         uses: actions/setup-java@v3
