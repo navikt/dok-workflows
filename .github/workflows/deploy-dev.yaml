@@ -1,4 +1,4 @@
-name: Build and push
+name: Deploy to single environment in dev-fss
 
 on:
   workflow_call:
