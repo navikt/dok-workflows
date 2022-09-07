@@ -6,6 +6,7 @@ Fellesrepo med reusuable workflows i Github Actions som Team Dokumentløysingar 
 - build-and-publish: bygg og push image til Github Container Registry
 - build-and-publish-artifact: bygg og push jar til Github packages (Apache Maven Registry)
 - deploy-dev: deploy image til dev-fss
+- deploy-dev-to-all-dev-environments: deploy image til alle miljø i dev-fss basert på konfigurasjonsfilene i nais-mappa
 - deploy-prod: deploy image til prod-fss
 - release-drafter: opprett draft release før prodsetjing
 
@@ -73,9 +74,9 @@ jobs:
 ```
 
 ### Create release draft
-I dømet under skjer det bygg og deploy før laging eller oppdatering av release draft.
+I dømet under skjer det bygg og deploy til alle dev-miljø før laging eller oppdatering av release draft.
 ```
-name: Release Drafter
+name: Build and deploy to all dev environments, and create release draft
 
 on:
   push:
@@ -89,17 +90,16 @@ jobs:
       IMAGE: ghcr.io/${{ github.repository }}:${{ github.sha }}
     secrets: inherit
 
-  deploy-q1:
-    uses: navikt/dok-workflows/.github/workflows/deploy-dev.yaml@main
+  deploy-to-all-dev-environments:
     needs: build-and-publish
+    uses: navikt/dok-workflows/.github/workflows/deploy-to-all-dev-environments.yaml@main
     with:
       IMAGE: ghcr.io/${{ github.repository }}:${{ github.sha }}
-      NAIS_VARIABLES: nais/q1-config.json
     secrets: inherit
 
-  update_release_draft:
+  update-release-draft:
     uses: navikt/dok-workflows/.github/workflows/release-drafter.yml@main
-    needs: deploy-q1
+    needs: deploy-to-all-dev-environments
     secrets: inherit
 ```
 
