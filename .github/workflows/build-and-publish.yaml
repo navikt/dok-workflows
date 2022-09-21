@@ -40,7 +40,7 @@ jobs:
         run: | 
           curl https://raw.githubusercontent.com/navikt/dok-workflows/main/resources/toolchains.xml --output toolchains.xml
       - name: Build with Maven
-        run: mvn --batch-mode --update-snapshots -s settings.xml --global-toolchains toolchains.xml package
+        run: mvn --batch-mode --update-snapshots -s settings.xml --global-toolchains toolchains.xml verify
       - name: Login to Github Container Registry
         uses: docker/login-action@v2
         with:
