@@ -18,7 +18,7 @@ jobs:
           distribution: 'temurin'
       - name: Generate .m2/repository cache key
         id: m2-cache-key
-        run: echo "::soutet-output name=keyname::$(date +'maven-week-%U')"
+        run: echo "::set-output name=keyname::$(date +'maven-week-%U')"
       - name: Cache .m2/repository
         id: cache-m2-repository
         uses: actions/cache@v3
