@@ -4,6 +4,10 @@ name: Release Drafter
 
 on:
   workflow_call:
+    inputs:
+      tag:
+        required: false
+        type: string
 
 jobs:
   create-or-update-release-draft:
