@@ -1,11 +1,8 @@
-name: Build branch
+name: Build, deploy feature
 
 on:
   workflow_call:
 
 jobs:
-  prebuild:
-    uses: navikt/dok-workflows/.github/workflows/prebuild.yml@main
-  mvnbuild:
-    needs: prebuild
-    uses: navikt/dok-workflows/.github/workflows/mvnbuild.yml@main
+  build-deploy-feature:
+    uses: navikt/dok-workflows/.github/workflows/build-app.yml@main
