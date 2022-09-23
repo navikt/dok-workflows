@@ -2,11 +2,17 @@ name: Build app
 
 on:
   workflow_call:
+    outputs:
+      build-tag:
+        description: "Build tag"
+        value: ${{ jobs.build-app.outputs.build-tag }}
 
 jobs:
   build-app:
     name: Build app
     runs-on: ubuntu-latest
+    outputs:
+      build-tag: ${{ steps.generate-build-tag.outputs.build-tag }}
     steps:
       # prebuild
       - name: Checkout code
@@ -43,3 +49,19 @@ jobs:
           curl https://raw.githubusercontent.com/navikt/dok-workflows/main/resources/toolchains.xml --output toolchains.xml
       - name: Build with Maven
         run: mvn --batch-mode --update-snapshots -s settings.xml --global-toolchains toolchains.xml verify
+      - name: Generate build tag
+        id: generate-build-tag
+        run: echo "::set-output name=build-tag::$(git rev-parse --short HEAD)"
+      # docker build
+      - name: Login to Github Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          push: true
+          tags: ${{ github.repository }}:${{ steps.generate-build-tag.outputs.build-tag }}

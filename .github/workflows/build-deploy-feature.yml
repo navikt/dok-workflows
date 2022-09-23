@@ -1,0 +1,13 @@
+name: Build, deploy feature
+
+on:
+  workflow_call:
+
+jobs:
+  build-feature:
+    uses: navikt/dok-workflows/.github/workflows/build-app.yml@main
+    secrets: inherit
+#  deploy-feature:
+#    uses: navikt/dok-workflows/.github/workflows/deploy-feature-dev.yml@main
+#    needs: build-feature
+#    secrets: inherit

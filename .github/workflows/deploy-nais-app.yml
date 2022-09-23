@@ -1,0 +1,33 @@
+on:
+  workflow_call:
+    inputs:
+      build-tag:
+        required: true
+        type: string
+      nav-cluster:
+        required: true
+        type: string
+      nav-environment:
+        required: true
+        type: string
+
+jobs:
+  deploy-nais-app:
+    name: Deploy to ${{ input.nav-environment }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      # sanity check
+      - name: Check if nais/${{ input.nav-environment }}-config.json exists
+        id: check-json
+        run: echo "::set-output name=file-exists::$(test -f nais/${{ input.nav-environment }}-config.json && echo 'true' || echo 'false')"
+      - uses: nais/deploy/actions/deploy@v1
+        if: ${{ steps.check-json.outputs.file-exists == "true" }}
+        env:
+          APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
+          CLUSTER: ${{ input.nav-cluster }}
+          RESOURCE: nais/naiserator.yaml
+          VARS: nais/${{ input.nav-environment }}-config.json
+          VAR: image=${{ github.repository }}:${{ input.nav-environment }}
+      - name: Unable to deploy
+        run: echo "::warning title=Unable to deploy::Could not find nais/${{ input.nav-environment }}-config.json"
