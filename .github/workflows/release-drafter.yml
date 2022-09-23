@@ -32,5 +32,6 @@ jobs:
         #   disable-autolabeler: true
         with:
           tag: ${{ inputs.tag }}
+          name: ${{ inputs.tag }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
