@@ -4,7 +4,6 @@ on:
   workflow_call:
 
 jobs:
-  runs-on: ubuntu-latest
   prebuild:
     uses: navikt/dok-workflows/.github/workflows/prebuild.yml@main
   mvnbuild:
