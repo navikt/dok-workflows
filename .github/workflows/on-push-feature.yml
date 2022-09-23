@@ -6,3 +6,4 @@ on:
 jobs:
   build-deploy-feature:
     uses: navikt/dok-workflows/.github/workflows/build-app.yml@main
+    secrets: inherit

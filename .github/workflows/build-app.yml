@@ -35,7 +35,7 @@ jobs:
             { "id": "confluent", "url": "https://packages.confluent.io/maven/" }
           ]'
           servers: '[
-            { "id": "github", "username": "x-access-token", "password": "test" }
+            { "id": "github", "username": "x-access-token", "password": "${{ secrets.READER_TOKEN }}" }
           ]'
           output_file: settings.xml
       - name: Download toolchain file
