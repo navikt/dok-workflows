@@ -64,4 +64,4 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ github.repository }}:${{ steps.generate-build-tag.outputs.build-tag }}
+          tags: ghcr.io/${{ github.repository }}:${{ steps.generate-build-tag.outputs.build-tag }}
