@@ -1,0 +1,26 @@
+name: Mvn build title
+
+on:
+  workflow_call:
+
+jobs:
+  mvn-build-in-job:
+    name: Prebuild name from name
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create m2-settings
+        uses: whelk-io/maven-settings-xml-action@8a613be18185c8521e1501081adad5041840f2c8 # v20
+        with:
+          repositories: '[
+            { "id": "github", "url": "https://maven.pkg.github.com/navikt/maven-release", "releases": { "enabled": "true" }, "snapshots": { "enabled": "false" } },
+            { "id": "confluent", "url": "https://packages.confluent.io/maven/" }
+          ]'
+          servers: '[
+            { "id": "github", "username": "x-access-token", "password": "${{ secrets.READER_TOKEN }}" }
+          ]'
+          output_file: settings.xml
+      - name: Download toolchain file
+        run: |
+          curl https://raw.githubusercontent.com/navikt/dok-workflows/main/resources/toolchains.xml --output toolchains.xml
+      - name: Build with Maven
+        run: mvn --batch-mode --update-snapshots -s settings.xml --global-toolchains toolchains.xml verify
