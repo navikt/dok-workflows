@@ -25,7 +25,7 @@ jobs:
       matrix:
         environment: ${{ fromJson(needs.detect-dev-environments.outputs.environments) }}
     with:
-      build-tag: ${{ input.build-tag }}
+      build-tag: ${{ inputs.build-tag }}
       nav-cluster: dev-fss
       nav-environment: ${{ matrix.environment }}
     secrets: inherit

@@ -28,6 +28,7 @@ jobs:
           CLUSTER: ${{ input.nav-cluster }}
           RESOURCE: nais/naiserator.yaml
           VARS: nais/${{ input.nav-environment }}-config.json
-          VAR: image=${{ github.repository }}:${{ input.nav-environment }}
+          VAR: image=ghcr.io/${{ github.repository }}:${{ input.nav-environment }}
       - name: Unable to deploy
+        if: ${{ steps.check-json.outputs.file-exists == "false" }}
         run: echo "::warning title=Unable to deploy::Could not find nais/${{ input.nav-environment }}-config.json"
