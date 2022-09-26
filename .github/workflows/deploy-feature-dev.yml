@@ -23,7 +23,7 @@ jobs:
     needs: detect-dev-environments
     strategy:
       matrix:
-        environment: ${{ fromJson(needs.detect-dev-environments.outputs.environments) }}
+        environment: ${{ needs.detect-dev-environments.outputs.environments }}
     with:
       build-tag: ${{ inputs.build-tag }}
       nav-cluster: dev-fss
