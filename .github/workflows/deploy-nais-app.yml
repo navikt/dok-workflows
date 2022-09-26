@@ -13,22 +13,22 @@ on:
 
 jobs:
   deploy-nais-app:
-    name: Deploy to ${{ input.nav-environment }}
+    name: Deploy to ${{ inputs.nav-environment }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       # sanity check
-      - name: Check if nais/${{ input.nav-environment }}-config.json exists
+      - name: Check if nais/${{ inputs.nav-environment }}-config.json exists
         id: check-json
-        run: echo "::set-output name=file-exists::$(test -f nais/${{ input.nav-environment }}-config.json && echo 'true' || echo 'false')"
+        run: echo "::set-output name=file-exists::$(test -f nais/${{ inputs.nav-environment }}-config.json && echo 'true' || echo 'false')"
       - uses: nais/deploy/actions/deploy@v1
         if: ${{ steps.check-json.outputs.file-exists == "true" }}
         env:
           APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
-          CLUSTER: ${{ input.nav-cluster }}
+          CLUSTER: ${{ inputs.nav-cluster }}
           RESOURCE: nais/naiserator.yaml
-          VARS: nais/${{ input.nav-environment }}-config.json
-          VAR: image=ghcr.io/${{ github.repository }}:${{ input.nav-environment }}
+          VARS: nais/${{ inputs.nav-environment }}-config.json
+          VAR: image=ghcr.io/${{ github.repository }}:${{ inputs.nav-environment }}
       - name: Unable to deploy
         if: ${{ steps.check-json.outputs.file-exists == "false" }}
-        run: echo "::warning title=Unable to deploy::Could not find nais/${{ input.nav-environment }}-config.json"
+        run: echo "::warning title=Unable to deploy::Could not find nais/${{ inputs.nav-environment }}-config.json"
