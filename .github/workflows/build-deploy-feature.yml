@@ -12,4 +12,4 @@ jobs:
     needs: build-feature
     secrets: inherit
     with:
-      build-tag: ${{ jobs.build-feature.outputs.build-tag }}
+      build-tag: ${{ needs.build-feature.outputs.build-tag }}
