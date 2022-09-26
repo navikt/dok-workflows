@@ -11,3 +11,5 @@ jobs:
     uses: navikt/dok-workflows/.github/workflows/deploy-feature-dev.yml@main
     needs: build-feature
     secrets: inherit
+    with:
+      build-tag: ${{ jobs.build-feature.outputs.build-tag }}
