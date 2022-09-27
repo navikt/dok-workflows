@@ -15,6 +15,6 @@ jobs:
       build-tag: ${{ needs.build-feature.outputs.build-tag }}
   draft-release:
     uses: navikt/dok-workflows/.github/workflows/release-draft.yml@main
-    needs: deploy-feature
+    needs: [build-feature, deploy-feature]
     with:
       build-tag: ${{ needs.build-feature.outputs.build-tag }}
