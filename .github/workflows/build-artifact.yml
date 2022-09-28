@@ -18,6 +18,9 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+        # checkout gir shallow copy - fetch-depth: 0 vil tilgjengeliggjøre tags
+        with:
+          fetch-depth: 0
       - name: Create m2-settings
         uses: whelk-io/maven-settings-xml-action@8a613be18185c8521e1501081adad5041840f2c8 # v20
         with:
