@@ -34,6 +34,13 @@ jobs:
         with:
           path: ~/.m2/repository
           key: ${{ steps.m2-cache-key.outputs.keyname }}
+      # build tag
+      - name: Generate build tag
+        id: generate-build-tag
+        run: echo "::set-output name=build-tag::$(ver=$(git describe --abbrev=0 --tags | awk -F \. {'$1++;print $1'}); if ! [[ $ver =~ ^[0-9]+$ ]]; then (echo "1" && git rev-parse --short HEAD) | paste -s -d'-'; else (echo $ver && git rev-parse --short HEAD) | paste -s -d'-' ; fi)"
+      - name: Print build tag/artifact version
+        id: print-build-tag
+        run: echo "Generated build tag is ${{ steps.generate-build-tag.outputs.build-tag }}"
       # maven build
       - name: Create m2-settings
         uses: whelk-io/maven-settings-xml-action@8a613be18185c8521e1501081adad5041840f2c8 # v20
@@ -50,18 +57,12 @@ jobs:
       - name: Download toolchain file
         run: |
           curl https://raw.githubusercontent.com/navikt/dok-workflows/main/resources/toolchains.xml --output toolchains.xml
-      - name: Build with Maven
-        run: mvn --batch-mode --update-snapshots -s settings.xml --global-toolchains toolchains.xml verify
-      - name: Generate build tag
-        id: generate-build-tag
-        run: echo "::set-output name=build-tag::$(ver=$(git describe --abbrev=0 --tags | awk -F \. {'$1++;print $1'}); if ! [[ $ver =~ ^[0-9]+$ ]]; then (echo "1" && git rev-parse --short HEAD) | paste -s -d'-'; else (echo $ver && git rev-parse --short HEAD) | paste -s -d'-' ; fi)"
-      - name: Print build tag/artifact version
-        id: print-build-tag
-        run: echo "Generated build tag is ${{ steps.generate-build-tag.outputs.build-tag }}"
-      - name: Set artifact version
+      - name: Set maven artifact version
         run: |
           mvn versions:set -DnewVersion="${{ steps.generate-build-tag.outputs.build-tag }}"
           mvn versions:commit
+      - name: Build with Maven
+        run: mvn --batch-mode --update-snapshots -s settings.xml --global-toolchains toolchains.xml verify
       # docker build
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
