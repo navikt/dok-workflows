@@ -3,16 +3,18 @@ name: Build and test artifact
 on:
   workflow_call:
     inputs:
-      JAVA_VERSION:
+      java-version:
         required: false
         type: string
         description: Java version to build with
         default: '17'
 
 jobs:
-  build:
+  build-and-test:
     name: Build and test artifact
     runs-on: ubuntu-latest
+    outputs:
+      build-tag: ${{ steps.generate-build-tag.outputs.build-tag }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -28,10 +30,10 @@ jobs:
             { "id": "github", "username": "x-access-token", "password": "${{ secrets.READER_TOKEN }}" }
           ]'
           output_file: settings.xml
-      - name: Set up JDK${{ inputs.JAVA_VERSION }} and cache dependencies
+      - name: Set up JDK${{ inputs.java-version }} and cache dependencies
         uses: actions/setup-java@v3
         with:
-          java-version: ${{ inputs.JAVA_VERSION }}
+          java-version: ${{ inputs.java-version }}
           distribution: 'temurin'
           cache: 'maven'
       - name: Download toolchain file
@@ -39,3 +41,15 @@ jobs:
           curl https://raw.githubusercontent.com/navikt/dok-workflows/main/resources/toolchains.xml --output toolchains.xml
       - name: Build with Maven
         run: mvn --settings settings.xml --global-toolchains toolchains.xml verify
+      - name: Generate build tag
+        id: generate-build-tag
+        run: echo "::set-output name=build-tag::$(ver=$(git describe --abbrev=0 --tags | awk -F \. {'$1++;print $1'}); if ! [[ $ver =~ ^[0-9]+$ ]]; then (echo "1" && git rev-parse --short HEAD) | paste -s -d'-'; else (echo $ver && git rev-parse --short HEAD) | paste -s -d'-' ; fi)"
+      - name: Print build tag/artifact version
+        id: print-build-tag
+        run: echo "Generated build tag is ${{ steps.generate-build-tag.outputs.build-tag }}"
+  release-draft:
+    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main'
+    uses: navikt/dok-workflows/.github/workflows/release-draft.yml@main
+    needs: [ build-test, publish-artifact ]
+    with:
+      build-tag: ${{ needs.build-and-test.outputs.build-tag }}

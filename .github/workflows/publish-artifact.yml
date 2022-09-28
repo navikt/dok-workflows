@@ -1,20 +1,20 @@
-name: Build and publish Docker image
+name: Publish artifact with build-tag to Github package registry
 
 on:
   workflow_call:
     inputs:
-      IMAGE:
-        required: true
-        type: string
-      JAVA_VERSION:
+      java-version:
         required: false
         type: string
         description: Java version to build with
         default: '17'
+      build-tag:
+        required: true
+        type: string
 
 jobs:
   build:
-    name: Build and publish Docker image to ghcr
+    name: Build and publish to ghcr
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -27,7 +27,8 @@ jobs:
             { "id": "confluent", "url": "https://packages.confluent.io/maven/" }
           ]'
           servers: '[
-            { "id": "github", "username": "x-access-token", "password": "${{ secrets.READER_TOKEN }}" }
+            { "id": "github", "username": "x-access-token", "password": "${{ secrets.READER_TOKEN }}" },
+            { "id": "ghcr", "username": "${{ github.actor }}", "password": "${{ secrets.GITHUB_TOKEN }}" }
           ]'
           output_file: settings.xml
       - name: Set up JDK${{ inputs.JAVA_VERSION }} and cache dependencies
@@ -37,19 +38,12 @@ jobs:
           distribution: 'temurin'
           cache: 'maven'
       - name: Download toolchain file
-        run: | 
+        run: |
           curl https://raw.githubusercontent.com/navikt/dok-workflows/main/resources/toolchains.xml --output toolchains.xml
+      - name: Set release tag
+        run: |
+          echo "Setting tag ${{ inputs.build-tag }}"
+          mvn versions:set -DnewVersion="${{ inputs.build-tag }}"
+          mvn versions:commit
       - name: Build with Maven
-        run: mvn --batch-mode --update-snapshots -s settings.xml --global-toolchains toolchains.xml verify
-      - name: Login to Github Container Registry
-        uses: docker/login-action@v2
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v3
-        with:
-          context: .
-          push: true
-          tags: ${{ inputs.IMAGE }}
+        run: mvn --settings settings.xml --global-toolchains toolchains.xml deploy
