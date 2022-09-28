@@ -31,10 +31,10 @@ jobs:
             { "id": "ghcr", "username": "${{ github.actor }}", "password": "${{ secrets.GITHUB_TOKEN }}" }
           ]'
           output_file: settings.xml
-      - name: Set up JDK${{ inputs.JAVA_VERSION }} and cache dependencies
+      - name: Set up JDK${{ inputs.java-version }} and cache dependencies
         uses: actions/setup-java@v3
         with:
-          java-version: ${{ inputs.JAVA_VERSION }}
+          java-version: ${{ inputs.java-version }}
           distribution: 'temurin'
           cache: 'maven'
       - name: Download toolchain file
