@@ -12,7 +12,6 @@ on:
 jobs:
   publish-artifact:
     uses: navikt/dok-workflows/.github/workflows/publish-artifact.yml@main
-    needs: build-test
     with:
       java-version: ${{ inputs.java-version }}
       build-tag: ${{ github.ref_name }}
