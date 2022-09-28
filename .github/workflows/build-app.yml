@@ -45,8 +45,8 @@ jobs:
           else 
             build_tag=$((echo $base_number && git rev-parse --short HEAD) | paste -s -d'-'); 
           fi
-          echo "Generated build-tag=$build_tag" 
-          echo "::set-output name=build-tag::$($build_tag)"
+          echo "Generated build-tag=$build_tag"
+          echo "::set-output name=build-tag::$(echo $build_tag)"
       # maven build
       - name: Create m2-settings
         uses: whelk-io/maven-settings-xml-action@8a613be18185c8521e1501081adad5041840f2c8 # v20
