@@ -17,6 +17,7 @@ jobs:
       # prebuild
       - name: Checkout code
         uses: actions/checkout@v3
+        # checkout gir shallow copy - fetch-depth: 0 vil tilgjengeliggjøre tags
         with:
           fetch-depth: 0
       - name: Set up JDK17
@@ -54,9 +55,11 @@ jobs:
       - name: Generate build tag
         id: generate-build-tag
         run: echo "::set-output name=build-tag::$(ver=$(git describe --abbrev=0 --tags | awk -F \. {'$1++;print $1'}); if ! [[ $ver =~ ^[0-9]+$ ]]; then (echo "1" && git rev-parse --short HEAD) | paste -s -d'-'; else (echo $ver && git rev-parse --short HEAD) | paste -s -d'-' ; fi)"
+      - name: Print build tag/artifact version
+        id: print-build-tag
+        run: echo "Generated build tag is ${{ steps.generate-build-tag.outputs.build-tag }}"
       - name: Set artifact version
         run: |
-          echo "Setting artifact version ${{ steps.generate-build-tag.outputs.build-tag }}"
           mvn versions:set -DnewVersion="${{ steps.generate-build-tag.outputs.build-tag }}"
           mvn versions:commit
       # docker build

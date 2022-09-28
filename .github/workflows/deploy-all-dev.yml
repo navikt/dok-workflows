@@ -17,6 +17,8 @@ jobs:
       - uses: actions/checkout@v3
       - id: create-strategy-matrix
         run: echo "::set-output name=environments::$(array=($(ls nais/q*config.json | sed -nr 's/nais\/(.*)\-config.json/\1/p')); printf '%s\n' "${array[@]}" | jq -R . | jq -s -c .)"
+      - id: print-dev-environments
+        run: echo "List of dev environments to deploy to is ${{ steps.create-strategy-matrix.outputs.environments }}"
 
   deploy-to-dev:
     uses: navikt/dok-workflows/.github/workflows/deploy-nais-app.yml@main
