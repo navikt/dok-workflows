@@ -50,6 +50,6 @@ jobs:
   release-draft:
     if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main'
     uses: navikt/dok-workflows/.github/workflows/release-draft.yml@main
-    needs: [ build-test, publish-artifact ]
+    needs: build-and-test
     with:
       build-tag: ${{ needs.build-and-test.outputs.build-tag }}
