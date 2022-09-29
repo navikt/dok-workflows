@@ -8,13 +8,10 @@ on:
         type: string
         description: Java version to build with
         default: '17'
-      build-tag:
-        required: true
-        type: string
 
 jobs:
   build:
-    name: Build and publish to ghcr
+    name: Build and publish artifact to ghcr
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -42,8 +39,8 @@ jobs:
           curl https://raw.githubusercontent.com/navikt/dok-workflows/main/resources/toolchains.xml --output toolchains.xml
       - name: Set release tag
         run: |
-          echo "Setting tag ${{ inputs.build-tag }}"
-          mvn versions:set -DnewVersion="${{ inputs.build-tag }}"
+          echo "Setting tag ${{ github.ref_name }}"
+          mvn versions:set -DnewVersion="${{ github.ref_name }}"
           mvn versions:commit
       - name: Build with Maven
         run: mvn --settings settings.xml --global-toolchains toolchains.xml deploy
