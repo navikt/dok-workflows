@@ -1,61 +1,51 @@
 # Dok-workflows
 Fellesrepo med reusuable workflows i Github Actions som Team Dokumentløysingar sine applikasjonar kan kalle.
 
-## Tilgjengelege workflows
-- build-and-test: bygg og test Java-kode (mvn verify)
-- build-and-publish: bygg og push image til Github Container Registry
-- build-and-publish-artifact: bygg og push jar til Github packages (Apache Maven Registry)
-- deploy-dev: deploy image til dev-fss
-- deploy-dev-to-all-dev-environments: deploy image til alle miljø i dev-fss basert på konfigurasjonsfilene i nais-mappa
+## Tilgjengelege workflows for app
+- build-deploy-feature: bygg og deploy feature-branch til alle dev-miljø (q*)
+- build-deploy-main: bygg og deploy main-branch til alle dev-miljø (q*), lag release draft
 - deploy-prod: deploy image til prod-fss
-- release-drafter: opprett draft release før prodsetjing
 
-## Døme på bruk av reusable workflows
+## Tilgjengelege workflows for artifakt
+- build-artifact: bygg artifakt og lag release draft viss det er main/master-branch
+- publish-artifact: bygg og push jar til Github packages (Apache Maven Registry)
+
+## Døme på bruk av reusable workflows for app
 Alle døma under tek i bruk reusable workflows frå dette repoet.
 
-### Build and publish
+### build-deploy-feature
 ```
-name: Build and publish to ghcr
+name: Build, deploy dev feature
 
 on:
   push:
     branches-ignore:
       - main
+      - master
 
 jobs:
   build:
-    uses: navikt/dok-workflows/.github/workflows/build-and-publish.yaml@main
-    with:
-      IMAGE: ghcr.io/${{ github.repository }}:${{ github.sha }}
+    uses: navikt/dok-workflows/.github/workflows/build-deploy-feature.yml@main
     secrets: inherit
 ```
 
-### Deploy-dev
-I dømet under er det manuell deploy med val av q1 eller q2
+### build-deploy-main
 ```
-name: Manual deploy to dev
+name: Build, deploy dev, draft main
 
 on:
-  workflow_dispatch:
-    inputs:
-      environment:
-        type: choice
-        description: Deploy til miljø
-        options:
-          - q1
-          - q2
-        required: true
+  push:
+    branches:
+      - main
+      - master
 
 jobs:
-  deploy-dev:
-    uses: navikt/dok-workflows/.github/workflows/deploy-dev.yaml@main
-    with:
-      IMAGE: ghcr.io/${{ github.repository }}:${{ github.sha }}
-      NAIS_VARIABLES: nais/${{inputs.environment}}-config.json
+  build:
+    uses: navikt/dok-workflows/.github/workflows/build-deploy-main.yml@main
     secrets: inherit
 ```
 
-### Deploy-prod
+### deploy-prod
 I dømet under skjer release til prod ved 'Publish release' i /releases på Github
 ```
 name: Deploy release to prod
@@ -67,44 +57,45 @@ on:
 
 jobs:
   deploy-prod:
-    uses: navikt/dok-workflows/.github/workflows/deploy-prod.yaml@main
-    with:
-      IMAGE: ghcr.io/${{ github.repository }}:${{ github.sha }}
+    uses: navikt/dok-workflows/.github/workflows/deploy-prod.yml@main
     secrets: inherit
 ```
 
-### Create release draft
-I dømet under skjer det bygg og deploy til alle dev-miljø før laging eller oppdatering av release draft.
+## Døme på bruk av reusable workflows for artifakt
+
+### build-artifact
 ```
-name: Build and deploy to all dev environments, and create release draft
+name: Build and test artifact - create draft if main branch
 
 on:
   push:
     branches:
-      - main
+      - '**'
 
 jobs:
-  build-and-publish:
-    uses: navikt/dok-workflows/.github/workflows/build-and-publish.yaml@main
+  build-main-and-feature-branch:
+    uses: navikt/dok-workflows/.github/workflows/build-artifact.yml@main
     with:
-      IMAGE: ghcr.io/${{ github.repository }}:${{ github.sha }}
-    secrets: inherit
-
-  deploy-to-all-dev-environments:
-    needs: build-and-publish
-    uses: navikt/dok-workflows/.github/workflows/deploy-to-all-dev-environments.yaml@main
-    with:
-      IMAGE: ghcr.io/${{ github.repository }}:${{ github.sha }}
-    secrets: inherit
-
-  update-release-draft:
-    uses: navikt/dok-workflows/.github/workflows/release-drafter.yml@main
-    needs: deploy-to-all-dev-environments
+      java-version: '11'
     secrets: inherit
 ```
 
-For informasjon om workflows relatert til publisering av artifaktar kan ein sjekke ut [melding-virksomhet-dokdistfordeling sitt Github repository](https://github.com/navikt/melding-virksomhet-dokdistfordeling),
-sidan den flyten er litt annleis. Reusable workflows som er i bruk der er `build-and-test`, `build-and-publish-artifact` og `release-drafter`.
+### publish-artifact
+```
+name: Publish artifact
+
+on:
+  release:
+    types:
+      - published
+
+jobs:
+  publish-artifact:
+    uses: navikt/dok-workflows/.github/workflows/publish-artifact.yml@main
+    with:
+      java-version: '11'
+    secrets: inherit
+```
 
 ## Andre spørsmål?
 Spørsmål om koda eller prosjektet kan stillast på [Slack-kanalen for \#Team Dokumentløsninger](https://nav-it.slack.com/archives/C6W9E5GPJ)
