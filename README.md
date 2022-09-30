@@ -13,88 +13,28 @@ Fellesrepo med reusuable workflows i Github Actions som Team Dokumentløysingar 
 ## Døme på bruk av reusable workflows for app
 Alle døma under tek i bruk reusable workflows frå dette repoet.
 
-### build-deploy-feature
-```
-name: Build, deploy dev feature
+### Oppsett
 
-on:
-  push:
-    branches-ignore:
-      - main
-      - master
+Kopier filene frå  [`/eksempel`](/eksempel) til rotområdet på repoet ein ynskjer at tar i bruk reusable workflows.
 
-jobs:
-  build:
-    uses: navikt/dok-workflows/.github/workflows/build-deploy-feature.yml@main
-    secrets: inherit
+Under er ein oversikt på korleis mappestrukturen skal sjå ut.
+
 ```
 
-### build-deploy-main
-```
-name: Build, deploy dev, draft main
-
-on:
-  push:
-    branches:
-      - main
-      - master
-
-jobs:
-  build:
-    uses: navikt/dok-workflows/.github/workflows/build-deploy-main.yml@main
-    secrets: inherit
-```
-
-### deploy-prod
-I dømet under skjer release til prod ved 'Publish release' i /releases på Github
-```
-name: Deploy release to prod
-
-on:
-  release:
-    types:
-      - published
-
-jobs:
-  deploy-prod:
-    uses: navikt/dok-workflows/.github/workflows/deploy-prod.yml@main
-    secrets: inherit
-```
-
-## Døme på bruk av reusable workflows for artifakt
-
-### build-artifact
-```
-name: Build and test artifact - create draft if main branch
-
-on:
-  push:
-    branches:
-      - '**'
-
-jobs:
-  build-main-and-feature-branch:
-    uses: navikt/dok-workflows/.github/workflows/build-artifact.yml@main
-    with:
-      java-version: '11'
-    secrets: inherit
-```
-
-### publish-artifact
-```
-name: Publish artifact
-
-on:
-  release:
-    types:
-      - published
-
-jobs:
-  publish-artifact:
-    uses: navikt/dok-workflows/.github/workflows/publish-artifact.yml@main
-    with:
-      java-version: '11'
-    secrets: inherit
+min-app/
+├─ .github/
+│  ├─ workflows/
+│  │  ├─ build-deploy-feature.yml
+│  │  ├─ build-deploy-main.yml
+│  │  ├─ deploy-prod.yaml
+│  ├─ CODEOWNERS
+│  ├─ release-drafter.yml
+├─ nais/
+├─ app/
+├─ .gitignore
+├─ pom.xml
+├─ Dockerfile
+├─ README.md
 ```
 
 ## Andre spørsmål?
