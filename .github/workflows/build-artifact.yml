@@ -46,7 +46,7 @@ jobs:
         run: mvn --settings settings.xml --global-toolchains toolchains.xml verify
       - name: Generate build tag
         id: generate-build-tag
-        run: echo "::set-output name=build-tag::$(ver=$(git describe --abbrev=0 --tags | awk -F \. {'$1++;print $1'}); if ! [[ $ver =~ ^[0-9]+$ ]]; then (echo "1" && git rev-parse --short HEAD) | paste -s -d'-'; else (echo $ver && git rev-parse --short HEAD) | paste -s -d'-' ; fi)"
+        run: echo "build-tag=$(ver=$(git describe --abbrev=0 --tags | awk -F \. {'$1++;print $1'}); if ! [[ $ver =~ ^[0-9]+$ ]]; then (echo "1" && git rev-parse --short HEAD) | paste -s -d'-'; else (echo $ver && git rev-parse --short HEAD) | paste -s -d'-' ; fi)" >> $GITHUB_OUTPUT
       - name: Print build tag/artifact version
         id: print-build-tag
         run: echo "Generated build tag is ${{ steps.generate-build-tag.outputs.build-tag }}"
