@@ -17,7 +17,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
       - name: Create m2-settings
-        uses: whelk-io/maven-settings-xml-action@8a613be18185c8521e1501081adad5041840f2c8 # v20
+        uses: whelk-io/maven-settings-xml-action@6df64e4ba4842c203c604c1f45246c5863410adb # v21.1
         with:
           repositories: '[
             { "id": "github", "url": "https://maven.pkg.github.com/navikt/maven-release", "releases": { "enabled": "true" }, "snapshots": { "enabled": "false" } },
