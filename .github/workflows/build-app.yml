@@ -49,7 +49,7 @@ jobs:
           echo "build-tag=$(echo $build_tag)" >> $GITHUB_OUTPUT
       # maven build
       - name: Create m2-settings
-        uses: whelk-io/maven-settings-xml-action@6df64e4ba4842c203c604c1f45246c5863410adb # v21.1
+        uses: whelk-io/maven-settings-xml-action@7c60eb95b2d5ec18f2e0e29f34c9ed69475e7a96 # v21
         with:
           repositories: '[
             { "id": "central", "url": "https://repo1.maven.org/maven2/", "releases": { "enabled": "true" }, "snapshots": { "enabled": "false" } },
