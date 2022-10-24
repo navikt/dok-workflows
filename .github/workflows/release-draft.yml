@@ -14,7 +14,7 @@ jobs:
       pull-requests: write
     runs-on: ubuntu-latest
     steps:
-      - uses: release-drafter/release-drafter@06a49bf28488e030d35ca2ac6dbf7f408a481779
+      - uses: release-drafter/release-drafter@6df64e4ba4842c203c604c1f45246c5863410adb # 5.21.1
         with:
           tag: ${{ inputs.build-tag }}
           name: ${{ inputs.build-tag }}
