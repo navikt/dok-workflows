@@ -54,7 +54,8 @@ jobs:
           repositories: '[
             { "id": "central", "url": "https://repo1.maven.org/maven2/", "releases": { "enabled": "true" }, "snapshots": { "enabled": "false" } },
             { "id": "github", "url": "https://maven.pkg.github.com/navikt/maven-release", "releases": { "enabled": "true" }, "snapshots": { "enabled": "false" } },
-            { "id": "confluent", "url": "https://packages.confluent.io/maven/" }
+            { "id": "confluent", "url": "https://packages.confluent.io/maven/" },
+            { "id": "jitpack", "url": "https://jitpack.io" }
           ]'
           servers: '[
             { "id": "github", "username": "x-access-token", "password": "${{ secrets.READER_TOKEN }}" }
