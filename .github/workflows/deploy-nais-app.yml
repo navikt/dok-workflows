@@ -29,6 +29,6 @@ jobs:
           RESOURCE: nais/naiserator.yaml
           VARS: nais/${{ inputs.nav-environment }}-config.json
           VAR: image=ghcr.io/${{ github.repository }}:${{ inputs.build-tag }}
-      - name: Unable to deploy
+      - name: No config files detected - unable to deploy
         if: ${{ steps.check-json.outputs.file-exists != 'config_exists' }}
         run: echo "::warning title=Unable to deploy::Could not find nais/${{ inputs.nav-environment }}-config.json"
