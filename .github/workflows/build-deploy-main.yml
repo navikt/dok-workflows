@@ -4,17 +4,17 @@ on:
   workflow_call:
 
 jobs:
-  build-feature:
+  build-main:
     uses: navikt/dok-workflows/.github/workflows/build-app.yml@main
     secrets: inherit
-  deploy-feature:
+  deploy-main:
     uses: navikt/dok-workflows/.github/workflows/deploy-all-dev.yml@main
-    needs: build-feature
+    needs: build-main
     secrets: inherit
     with:
-      build-tag: ${{ needs.build-feature.outputs.build-tag }}
+      build-tag: ${{ needs.build-main.outputs.build-tag }}
   draft-release:
     uses: navikt/dok-workflows/.github/workflows/release-draft.yml@main
-    needs: [build-feature, deploy-feature]
+    needs: [build-main, deploy-main]
     with:
-      build-tag: ${{ needs.build-feature.outputs.build-tag }}
+      build-tag: ${{ needs.build-main.outputs.build-tag }}
