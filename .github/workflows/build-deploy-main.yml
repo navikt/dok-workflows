@@ -15,6 +15,6 @@ jobs:
       build-tag: ${{ needs.build-main.outputs.build-tag }}
   draft-release:
     uses: navikt/dok-workflows/.github/workflows/release-draft.yml@main
-    needs: [build-main, deploy-main]
+    needs: build-main
     with:
       build-tag: ${{ needs.build-main.outputs.build-tag }}
