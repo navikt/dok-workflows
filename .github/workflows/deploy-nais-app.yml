@@ -21,9 +21,6 @@ jobs:
       - name: Check if nais/${{ inputs.nav-environment }}-config.json exists
         id: check-json
         run: echo "file-exists=$(test -f nais/${{ inputs.nav-environment }}-config.json && echo 'config_exists' || echo 'config_not_exists')" >> $GITHUB_OUTPUT
-      - name: Print build tag/artifact version
-        id: debug-print-build-tag
-        run: echo "Build tag is '${{ inputs.build-tag }}'. Original build tag '${{ github.event.workflow_run.head_branch }}'"
       - uses: nais/deploy/actions/deploy@v1
         if: ${{ steps.check-json.outputs.file-exists == 'config_exists' }}
         env:
