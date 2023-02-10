@@ -43,7 +43,7 @@ jobs:
         run: |
           curl https://raw.githubusercontent.com/navikt/dok-workflows/main/resources/toolchains.xml --output toolchains.xml
       - name: Build with Maven
-        run: mvn --settings settings.xml --global-toolchains toolchains.xml verify
+        run: mvn --settings settings.xml --global-toolchains toolchains.xml package
       - name: Generate build tag
         id: generate-build-tag
         run: echo "build-tag=$(ver=$(git describe --abbrev=0 --tags | awk -F \. {'$1++;print $1'}); if ! [[ $ver =~ ^[0-9]+$ ]]; then (echo "1" && git rev-parse --short HEAD) | paste -s -d'-'; else (echo $ver && git rev-parse --short HEAD) | paste -s -d'-' ; fi)" >> $GITHUB_OUTPUT
