@@ -56,6 +56,7 @@ jobs:
             { "id": "github", "url": "https://maven.pkg.github.com/navikt/maven-release", "releases": { "enabled": "true" }, "snapshots": { "enabled": "false" } },
             { "id": "confluent", "url": "https://packages.confluent.io/maven/" },
             { "id": "jitpack", "url": "https://jitpack.io" }
+            { "id": "spring", "url": "https://repo.spring.io/plugins-release/" }
           ]'
           servers: '[
             { "id": "github", "username": "x-access-token", "password": "${{ secrets.READER_TOKEN }}" }
