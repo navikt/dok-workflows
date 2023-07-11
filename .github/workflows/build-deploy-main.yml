@@ -2,11 +2,19 @@ name: Build, deploy feature
 
 on:
   workflow_call:
+    inputs:
+      java-version:
+        required: false
+        type: string
+        description: Java version to build with
+        default: '17'
 
 jobs:
   build-main:
     uses: navikt/dok-workflows/.github/workflows/build-app.yml@main
     secrets: inherit
+    with:
+      java-version: ${{ inputs.java-version }}
   deploy-main:
     uses: navikt/dok-workflows/.github/workflows/deploy-all-dev.yml@main
     needs: build-main

@@ -6,6 +6,12 @@ on:
       build-tag:
         description: "Build tag"
         value: ${{ jobs.build-app.outputs.build-tag }}
+    inputs:
+      java-version:
+        required: false
+        type: string
+        description: Java version to build with
+        default: '17'
 
 jobs:
   build-app:
@@ -20,10 +26,10 @@ jobs:
         # checkout gir shallow copy - fetch-depth: 0 vil tilgjengeliggjøre tags
         with:
           fetch-depth: 0
-      - name: Set up JDK17
+      - name: Set up JDK${{ inputs.java-version }}
         uses: actions/setup-java@v3
         with:
-          java-version: 17
+          java-version: ${{ inputs.java-version }}
           distribution: 'temurin'
       - name: Generate ~/.m2/repository cache key
         id: m2-cache-key
