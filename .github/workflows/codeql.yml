@@ -37,7 +37,7 @@ jobs:
           # Prefix the list here with "+" to use these queries and those in the config file.
 
           # Details on CodeQL's query packs refer to : https://docs.github.com/en/code-security/code-scanning/automatically-scanning-your-code-for-vulnerabilities-and-errors/configuring-code-scanning#using-queries-in-ql-packs
-          queries: security-extended
+          queries: security-and-quality
       - name: Create m2-settings
         uses: whelk-io/maven-settings-xml-action@7c60eb95b2d5ec18f2e0e29f34c9ed69475e7a96 # v21
         with:
