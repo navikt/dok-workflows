@@ -16,9 +16,6 @@ on:
 jobs:
   build-app:
     name: Build app
-    permissions:
-      contents: read|write
-      packages: write
     runs-on: ubuntu-latest
     outputs:
       build-tag: ${{ steps.generate-build-tag.outputs.build-tag }}
