@@ -6,6 +6,11 @@ on:
       build-tag:
         required: true
         type: string
+      nav-cluster:
+        required: false
+        type: string
+        description: Nais cluster in dev to deploy to
+        default: 'dev-fss'
 
 jobs:
   detect-dev-environments:
@@ -28,6 +33,6 @@ jobs:
         environment: ${{ fromJson(needs.detect-dev-environments.outputs.environments) }}
     with:
       build-tag: ${{ inputs.build-tag }}
-      nav-cluster: dev-fss
+      nav-cluster: ${{ inputs.nav-cluster }}
       nav-environment: ${{ matrix.environment }}
     secrets: inherit

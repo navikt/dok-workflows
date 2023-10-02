@@ -8,6 +8,11 @@ on:
         type: string
         description: Java version to build with
         default: '17'
+      nav-cluster:
+        required: false
+        type: string
+        description: Nais cluster in dev to deploy to
+        default: 'dev-fss'
 
 jobs:
   build-main:
@@ -21,6 +26,7 @@ jobs:
     secrets: inherit
     with:
       build-tag: ${{ needs.build-main.outputs.build-tag }}
+      nav-cluster: ${{ inputs.nav-cluster }}
   draft-release:
     uses: navikt/dok-workflows/.github/workflows/release-draft.yml@main
     needs: build-main
