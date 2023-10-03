@@ -2,12 +2,17 @@ name: Deploy build-tag to prod-fss
 
 on:
   workflow_call:
+    nav-cluster:
+      required: false
+      type: string
+      description: Nais cluster in prod to deploy to
+      default: 'prod-fss'
 
 jobs:
   deploy-to-prod:
     uses: navikt/dok-workflows/.github/workflows/deploy-nais-app.yml@main
     with:
       build-tag: ${{ github.ref_name }}
-      nav-cluster: prod-fss
+      nav-cluster: ${{ inputs.nav-cluster }}
       nav-environment: p
     secrets: inherit
