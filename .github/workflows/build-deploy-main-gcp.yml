@@ -16,7 +16,7 @@ jobs:
     with:
       java-version: ${{ inputs.java-version }}
   deploy-main:
-    uses: navikt/dok-workflows/.github/workflows/deploy-all-dev.yml@main
+    uses: navikt/dok-workflows/.github/workflows/deploy-all-dev-gcp.yml@main
     needs: build-main
     secrets: inherit
     with:
