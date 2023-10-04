@@ -89,6 +89,6 @@ jobs:
         uses: nais/docker-build-push@v0
         with:
           team: teamdokumenthandtering
-          tag: ${{ steps.generate-build-tag.outputs.build-tag }}
+          tag: ghcr.io/${{ github.repository }}:${{ steps.generate-build-tag.outputs.build-tag }}
           project_id: ${{ vars.NAIS_MANAGEMENT_PROJECT_ID }}
           identity_provider: ${{ secrets.NAIS_WORKLOAD_IDENTITY_PROVIDER }}
