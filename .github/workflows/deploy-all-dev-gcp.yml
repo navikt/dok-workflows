@@ -1,0 +1,38 @@
+name: Deploy build-tag to all environments in dev-gcp
+
+on:
+  workflow_call:
+    inputs:
+      build-tag:
+        required: true
+        type: string
+      nav-cluster:
+        required: false
+        type: string
+        description: Nais cluster in dev to deploy to
+        default: 'dev-fss'
+
+jobs:
+  detect-dev-environments:
+    name: Detect dev environments to deploy to
+    runs-on: ubuntu-latest
+    outputs:
+      environments: ${{ steps.create-strategy-matrix.outputs.environments }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: create-strategy-matrix
+        run: echo "environments=$(array=($(ls nais/q*config.json | sed -nr 's/nais\/(.*)\-config.json/\1/p')); printf '%s\n' "${array[@]}" | jq -R . | jq -s -c .)" >> $GITHUB_OUTPUT
+      - id: print-dev-environments
+        run: echo "List of dev environments to deploy to is ${{ steps.create-strategy-matrix.outputs.environments }}"
+
+  deploy-to-dev:
+    uses: navikt/dok-workflows/.github/workflows/deploy-nais-app-gcp.yml@main
+    needs: detect-dev-environments
+    strategy:
+      matrix:
+        environment: ${{ fromJson(needs.detect-dev-environments.outputs.environments) }}
+    with:
+      build-tag: ${{ inputs.build-tag }}
+      nav-cluster: ${{ inputs.nav-cluster }}
+      nav-environment: ${{ matrix.environment }}
+    secrets: inherit
