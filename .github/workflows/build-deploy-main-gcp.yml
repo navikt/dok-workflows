@@ -11,7 +11,7 @@ on:
 
 jobs:
   build-main:
-    uses: navikt/dok-workflows/.github/workflows/build-app.yml@main
+    uses: navikt/dok-workflows/.github/workflows/build-app-gcp.yml@main
     secrets: inherit
     with:
       java-version: ${{ inputs.java-version }}
@@ -21,7 +21,7 @@ jobs:
     secrets: inherit
     with:
       build-tag: ${{ needs.build-main.outputs.build-tag }}
-      nav-cluster: dev-fss
+      nav-cluster: dev-gcp
   draft-release:
     uses: navikt/dok-workflows/.github/workflows/release-draft.yml@main
     needs: build-main
