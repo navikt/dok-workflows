@@ -1,0 +1,91 @@
+name: Build app
+
+on:
+  workflow_call:
+    outputs:
+      build-tag:
+        description: "Build tag"
+        value: ${{ jobs.build-app.outputs.build-tag }}
+    inputs:
+      java-version:
+        required: false
+        type: string
+        description: Java version to build with
+        default: '17'
+      nav-cluster:
+        required: false
+        type: string
+        description: Nais cluster in dev to deploy to
+        default: 'dev-fss'
+
+jobs:
+  build-app:
+    name: Build app
+    runs-on: ubuntu-latest
+    outputs:
+      build-tag: ${{ steps.generate-build-tag.outputs.build-tag }}
+    steps:
+      # prebuild
+      - name: Checkout code
+        uses: actions/checkout@v4
+        # checkout gir shallow copy - fetch-depth: 0 vil tilgjengeliggjøre tags
+        with:
+          fetch-depth: 0
+      - name: Set up JDK${{ inputs.java-version }}
+        uses: actions/setup-java@v3
+        with:
+          java-version: ${{ inputs.java-version }}
+          distribution: 'temurin'
+      - name: Generate ~/.m2/repository cache key
+        id: m2-cache-key
+        run: echo "keyname=$(date +'maven-week-%U')" >> $GITHUB_OUTPUT
+      - name: Cache ~/.m2/repository
+        id: cache-m2-repository
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2/repository
+          key: ${{ steps.m2-cache-key.outputs.keyname }}
+      # build tag
+      - name: Generate build tag
+        id: generate-build-tag
+        run: |
+          base_number=$(git describe --abbrev=0 --tags | awk -F \. {'$1++;print $1'})
+          echo "Build base_number=$base_number"
+          if ! [[ $base_number =~ ^[0-9]+$ ]]; then
+            build_tag=$((echo "1" && git rev-parse --short HEAD) | paste -s -d'-'); 
+          else 
+            build_tag=$((echo $base_number && git rev-parse --short HEAD) | paste -s -d'-'); 
+          fi
+          echo "Generated build-tag=$build_tag"
+          echo "build-tag=$(echo $build_tag)" >> $GITHUB_OUTPUT
+      # maven build
+      - name: Create m2-settings
+        uses: whelk-io/maven-settings-xml-action@7c60eb95b2d5ec18f2e0e29f34c9ed69475e7a96 # v21
+        with:
+          repositories: '[
+            { "id": "central", "url": "https://repo1.maven.org/maven2/", "releases": { "enabled": "true" }, "snapshots": { "enabled": "false" } },
+            { "id": "github", "url": "https://maven.pkg.github.com/navikt/maven-release", "releases": { "enabled": "true" }, "snapshots": { "enabled": "false" } },
+            { "id": "confluent", "url": "https://packages.confluent.io/maven/" },
+            { "id": "jitpack", "url": "https://jitpack.io" }
+          ]'
+          servers: '[
+            { "id": "github", "username": "x-access-token", "password": "${{ secrets.READER_TOKEN }}" }
+          ]'
+          output_file: settings.xml
+      - name: Download toolchain file
+        run: |
+          curl https://raw.githubusercontent.com/navikt/dok-workflows/main/resources/toolchains.xml --output toolchains.xml
+      - name: Set maven artifact version
+        run: |
+          mvn versions:set -DnewVersion="${{ steps.generate-build-tag.outputs.build-tag }}"
+          mvn versions:commit
+      - name: Build with Maven
+        run: mvn --batch-mode --update-snapshots -s settings.xml --global-toolchains toolchains.xml verify
+      # docker build
+      - name: Build and push to GAR
+        uses: nais/docker-build-push@v0
+        with:
+          team: teamdokumenthandtering
+          tag: ${{ steps.generate-build-tag.outputs.build-tag }}
+          project_id: ${{ vars.NAIS_MANAGEMENT_PROJECT_ID }}
+          identity_provider: ${{ secrets.NAIS_WORKLOAD_IDENTITY_PROVIDER }}

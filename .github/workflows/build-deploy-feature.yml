@@ -15,8 +15,15 @@ on:
         default: 'dev-fss'
 
 jobs:
-  build-feature:
+  build-feature-fss:
+    if: inputs.nav-cluster.endsWith('fss')
     uses: navikt/dok-workflows/.github/workflows/build-app.yml@main
+    secrets: inherit
+    with:
+      java-version: ${{ inputs.java-version }}
+  build-feature-gcp:
+    if: inputs.nav-cluster.endsWith('gcp')
+    uses: navikt/dok-workflows/.github/workflows/build-app-gcp.yml@main
     secrets: inherit
     with:
       java-version: ${{ inputs.java-version }}
