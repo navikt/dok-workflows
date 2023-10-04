@@ -2,11 +2,12 @@ name: Deploy build-tag to prod-fss
 
 on:
   workflow_call:
-    nav-cluster:
-      required: false
-      type: string
-      description: Nais cluster in prod to deploy to
-      default: 'prod-fss'
+    inputs:
+      nav-cluster:
+        required: false
+        type: string
+        description: Nais cluster in prod to deploy to
+        default: 'prod-fss'
 
 jobs:
   deploy-to-prod:
