@@ -29,7 +29,7 @@ jobs:
       java-version: ${{ inputs.java-version }}
   deploy-feature:
     uses: navikt/dok-workflows/.github/workflows/deploy-all-dev.yml@main
-    needs: build-feature
+    needs: [build-feature-fss, build-feature-gcp]
     secrets: inherit
     with:
       build-tag: ${{ needs.build-feature.outputs.build-tag }}
