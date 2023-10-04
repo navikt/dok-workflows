@@ -20,5 +20,5 @@ jobs:
     needs: build-feature-gcp
     secrets: inherit
     with:
-      build-tag: ${{ needs.build-feature.outputs.build-tag }}
+      build-tag: ${{ needs.build-feature-gcp.outputs.build-tag }}
       nav-cluster: dev-gcp

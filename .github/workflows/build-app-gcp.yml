@@ -90,5 +90,6 @@ jobs:
         with:
           team: teamdokumenthandtering
           tag: ghcr.io/${{ github.repository }}:${{ steps.generate-build-tag.outputs.build-tag }}
+          pull: true
           project_id: ${{ vars.NAIS_MANAGEMENT_PROJECT_ID }}
           identity_provider: ${{ secrets.NAIS_WORKLOAD_IDENTITY_PROVIDER }}
