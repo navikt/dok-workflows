@@ -6,6 +6,9 @@ on:
       build-tag:
         description: "Build tag"
         value: ${{ jobs.build-app.outputs.build-tag }}
+      image:
+        description: "Image tag for GAR"
+        value: ${{ jobs.build-app.outputs.image }}
     inputs:
       java-version:
         required: false
