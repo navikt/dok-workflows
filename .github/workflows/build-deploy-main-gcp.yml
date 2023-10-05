@@ -10,20 +10,20 @@ on:
         default: '17'
 
 jobs:
-  build-main:
+  build-main-gcp:
     uses: navikt/dok-workflows/.github/workflows/build-app-gcp.yml@main
     secrets: inherit
     with:
       java-version: ${{ inputs.java-version }}
   deploy-main:
     uses: navikt/dok-workflows/.github/workflows/deploy-all-dev-gcp.yml@main
-    needs: build-main
+    needs: build-main-gcp
     secrets: inherit
     with:
-      build-tag: ${{ needs.build-main.outputs.build-tag }}
+      image: ${{ needs.build-main-gcp.outputs.image }}
       nav-cluster: dev-gcp
   draft-release:
     uses: navikt/dok-workflows/.github/workflows/release-draft.yml@main
-    needs: build-main
+    needs: build-main-gcp
     with:
-      build-tag: ${{ needs.build-main.outputs.build-tag }}
+      build-tag: ${{ needs.build-main-gcp.outputs.build-tag }}

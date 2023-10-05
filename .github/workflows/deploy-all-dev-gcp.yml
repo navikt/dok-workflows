@@ -3,7 +3,7 @@ name: Deploy build-tag to all environments in dev-gcp
 on:
   workflow_call:
     inputs:
-      build-tag:
+      image:
         required: true
         type: string
       nav-cluster:
@@ -32,7 +32,7 @@ jobs:
       matrix:
         environment: ${{ fromJson(needs.detect-dev-environments.outputs.environments) }}
     with:
-      build-tag: ${{ inputs.build-tag }}
+      image: ${{ inputs.image }}
       nav-cluster: ${{ inputs.nav-cluster }}
       nav-environment: ${{ matrix.environment }}
     secrets: inherit

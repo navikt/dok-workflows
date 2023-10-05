@@ -27,6 +27,7 @@ jobs:
       id-token: write
     outputs:
       build-tag: ${{ steps.generate-build-tag.outputs.build-tag }}
+      image: ${{ steps.docker-build-push.outputs.image }}
     steps:
       # prebuild
       - name: Checkout code
@@ -86,6 +87,7 @@ jobs:
         run: mvn --batch-mode --update-snapshots -s settings.xml --global-toolchains toolchains.xml verify
       # docker build
       - name: Build and push to GAR
+        id: docker-build-push
         uses: nais/docker-build-push@v0
         with:
           team: teamdokumenthandtering

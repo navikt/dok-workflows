@@ -1,7 +1,7 @@
 on:
   workflow_call:
     inputs:
-      build-tag:
+      image:
         required: true
         type: string
       nav-cluster:
@@ -28,7 +28,7 @@ jobs:
           CLUSTER: ${{ inputs.nav-cluster }}
           RESOURCE: nais/naiserator.yaml
           VARS: nais/${{ inputs.nav-environment }}-config.json
-          VAR: image=${{ github.event.repository.name }}-${{ inputs.build-tag }}
+          VAR: image=${{ inputs.image }}
       - name: No config files detected - unable to deploy
         if: ${{ steps.check-json.outputs.file-exists != 'config_exists' }}
         run: echo "::warning title=Unable to deploy::Could not find nais/${{ inputs.nav-environment }}-config.json"
