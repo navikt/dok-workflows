@@ -26,4 +26,4 @@ jobs:
     uses: navikt/dok-workflows/.github/workflows/release-draft.yml@main
     needs: build-main-gcp
     with:
-      build-tag: ${{ needs.build-main-gcp.outputs.build-tag }}
+      tag: ${{ needs.build-main-gcp.outputs.tag }}
