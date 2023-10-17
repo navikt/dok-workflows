@@ -29,7 +29,7 @@ jobs:
       contents: read
       id-token: write
     outputs:
-      build-tag: ${{ steps.generate-build-tag.outputs.build-tag }}
+      tag: ${{ steps.docker-build-push.outputs.tag }}
       image: ${{ steps.docker-build-push.outputs.image }}
     steps:
       # prebuild
@@ -52,19 +52,6 @@ jobs:
         with:
           path: ~/.m2/repository
           key: ${{ steps.m2-cache-key.outputs.keyname }}
-      # build tag
-      - name: Generate build tag
-        id: generate-build-tag
-        run: |
-          base_number=$(git describe --abbrev=0 --tags | awk -F \. {'$1++;print $1'})
-          echo "Build base_number=$base_number"
-          if ! [[ $base_number =~ ^[0-9]+$ ]]; then
-            build_tag=$((echo "1" && git rev-parse --short HEAD) | paste -s -d'-'); 
-          else 
-            build_tag=$((echo $base_number && git rev-parse --short HEAD) | paste -s -d'-'); 
-          fi
-          echo "Generated build-tag=$build_tag"
-          echo "build-tag=$(echo $build_tag)" >> $GITHUB_OUTPUT
       # maven build
       - name: Create m2-settings
         uses: whelk-io/maven-settings-xml-action@7c60eb95b2d5ec18f2e0e29f34c9ed69475e7a96 # v21
@@ -82,10 +69,6 @@ jobs:
       - name: Download toolchain file
         run: |
           curl https://raw.githubusercontent.com/navikt/dok-workflows/main/resources/toolchains.xml --output toolchains.xml
-      - name: Set maven artifact version
-        run: |
-          mvn versions:set -DnewVersion="${{ steps.generate-build-tag.outputs.build-tag }}"
-          mvn versions:commit
       - name: Build with Maven
         run: mvn --batch-mode --update-snapshots -s settings.xml --global-toolchains toolchains.xml verify
       # docker build
