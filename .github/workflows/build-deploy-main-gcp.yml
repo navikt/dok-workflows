@@ -23,7 +23,7 @@ jobs:
       image: ${{ needs.build-main-gcp.outputs.image }}
       nav-cluster: dev-gcp
   draft-release:
-    uses: navikt/dok-workflows/.github/workflows/release-draft.yml@main
+    uses: navikt/dok-workflows/.github/workflows/release-draft-gcp.yml@main
     needs: build-main-gcp
     with:
       tag: ${{ needs.build-main-gcp.outputs.tag }}
