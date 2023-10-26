@@ -69,6 +69,10 @@ jobs:
       - name: Download toolchain file
         run: |
           curl https://raw.githubusercontent.com/navikt/dok-workflows/main/resources/toolchains.xml --output toolchains.xml
+      - name: Set maven artifact version
+        run: |
+          mvn versions:set -DnewVersion="$( git rev-parse --short HEAD )"
+          mvn versions:commit
       - name: Build with Maven
         run: mvn --batch-mode --update-snapshots -s settings.xml --global-toolchains toolchains.xml verify
       # docker build
