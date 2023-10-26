@@ -73,6 +73,7 @@ jobs:
         run: mvn --batch-mode --update-snapshots -s settings.xml --global-toolchains toolchains.xml verify
       # docker build
       - name: Build and push to GAR
+        if: ${{ github.actor != 'dependabot[bot]' }}
         id: docker-build-push
         uses: nais/docker-build-push@v0
         with:
