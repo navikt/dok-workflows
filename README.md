@@ -11,7 +11,7 @@ Fellesrepo med reusuable workflows i Github Actions som Team Dokumentløysingar 
 - publish-artifact: bygg og push jar til Github packages (Apache Maven Registry)
 
 ### Oppsett
-Kopier fylgjande (calling) workflows til rotområdet på repoet ein ynskjer å bruke reusable workflows.
+Kopier fylgjande (calling) workflows til workflows-mappa i repoet ein ynskjer å bruke reusable workflows.
 - fss: [`/eksempel/fss`](eksempel/.github/workflows/fss)
 - gcp: [`/eksempel/gcp`](eksempel/.github/workflows/gcp)
 Dersom eit prosjekt skal få laga PR frå Dependabot automatisk for avhengigheiter som skal bli oppdatert må også dependabot.yml bli kopiert inn i prosjektet.
