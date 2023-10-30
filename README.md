@@ -4,23 +4,21 @@ Fellesrepo med reusuable workflows i Github Actions som Team Dokumentløysingar 
 ## Tilgjengelege workflows for app
 - build-deploy-feature: bygg og deploy feature-branch til alle dev-miljø (q*)
 - build-deploy-main: bygg og deploy main-branch til alle dev-miljø (q*), lag release draft
-- deploy-prod: deploy image til prod-fss
+- deploy-prod: deploy image til prod-miljø
 
 ## Tilgjengelege workflows for artifakt
 - build-artifact: bygg artifakt og lag release draft viss det er main/master-branch
 - publish-artifact: bygg og push jar til Github packages (Apache Maven Registry)
 
-## Døme på bruk av reusable workflows for app
-Alle døma under tek i bruk reusable workflows frå dette repoet.
-
 ### Oppsett
+Kopier fylgjande (calling) workflows til rotområdet på repoet ein ynskjer å bruke reusable workflows.
+- fss: [`/eksempel/fss`](eksempel/.github/workflows/fss)
+- gcp: [`/eksempel/gcp`](eksempel/.github/workflows/gcp)
+Dersom eit prosjekt skal få laga PR frå Dependabot automatisk for avhengigheiter som skal bli oppdatert må også dependabot.yml bli kopiert inn i prosjektet.
 
-Kopier filene frå  [`/eksempel`](/eksempel) til rotområdet på repoet ein ynskjer at tar i bruk reusable workflows.
-
-Under er ein oversikt på korleis mappestrukturen skal sjå ut.
+Under er ein oversikt på korleis mappestrukturen skal sjå ut i repoet (i fss).
 
 ```
-
 min-app/
 ├─ .github/
 │  ├─ workflows/
