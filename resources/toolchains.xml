@@ -3,6 +3,16 @@
     <toolchain>
         <type>jdk</type>
         <provides>
+            <version>21</version>
+            <vendor>openjdk</vendor>
+        </provides>
+        <configuration>
+            <jdkHome>${env.JAVA_HOME}</jdkHome>
+        </configuration>
+    </toolchain>
+    <toolchain>
+        <type>jdk</type>
+        <provides>
             <version>17</version>
             <vendor>openjdk</vendor>
         </provides>
