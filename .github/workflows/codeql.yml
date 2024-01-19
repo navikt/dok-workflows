@@ -2,6 +2,12 @@ name: "CodeQL"
 
 on:
   workflow_call:
+    inputs:
+      java-version:
+        required: false
+        type: string
+        description: Java version to build with
+        default: '17'
 
 jobs:
   analyze:
@@ -21,10 +27,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up JDK17
+      - name: Set up JDK${{ inputs.java-version }}
         uses: actions/setup-java@v4
         with:
-          java-version: 17
+          java-version: ${{ inputs.java-version }}
           distribution: 'temurin'
 
       # Initializes the CodeQL tools for scanning.
