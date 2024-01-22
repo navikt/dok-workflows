@@ -36,7 +36,7 @@ jobs:
         run: echo "keyname=$(date +'maven-week-%U')" >> $GITHUB_OUTPUT
       - name: Cache ~/.m2/repository
         id: cache-m2-repository
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.m2/repository
           key: ${{ steps.m2-cache-key.outputs.keyname }}
@@ -87,7 +87,7 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Cache docker layers
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: /tmp/.buildx-cache
           key: ${{ runner.os }}-buildx-${{ github.sha }}
