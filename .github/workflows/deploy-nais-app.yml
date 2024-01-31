@@ -17,6 +17,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.build-tag }}
+          sparse-checkout: |
+            nais/**
+          sparse-checkout-cone-mode: false
       # sanity check
       - name: Check if nais/${{ inputs.nav-environment }}-config.json exists
         id: check-json
