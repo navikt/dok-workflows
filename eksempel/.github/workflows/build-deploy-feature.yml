@@ -13,5 +13,7 @@ jobs:
       contents: read
       packages: write
       id-token: write
-    uses: navikt/dok-workflows/.github/workflows/build-deploy-feature-gcp.yml@main
+    uses: navikt/dok-workflows/.github/workflows/build-deploy-feature-gar.yml@main
+    with:
+      java-version: '21'
     secrets: inherit

@@ -1,4 +1,4 @@
-name: Deploy build-tag to all environments in dev-gcp
+name: Deploy build-tag to all environments in dev-<cluster>
 
 on:
   workflow_call:
@@ -10,7 +10,7 @@ on:
         required: false
         type: string
         description: Nais cluster in dev to deploy to
-        default: 'dev-gcp'
+        default: 'dev-fss'
 
 jobs:
   detect-dev-environments:
@@ -26,7 +26,7 @@ jobs:
         run: echo "List of dev environments to deploy to is ${{ steps.create-strategy-matrix.outputs.environments }}"
 
   deploy-to-dev:
-    uses: navikt/dok-workflows/.github/workflows/deploy-nais-app-gcp.yml@main
+    uses: navikt/dok-workflows/.github/workflows/deploy-nais-app-gar.yml@main
     needs: detect-dev-environments
     strategy:
       matrix:

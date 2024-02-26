@@ -1,4 +1,4 @@
-name: Build, deploy feature to gcp
+name: Build, deploy feature
 
 on:
   workflow_call:
@@ -12,18 +12,18 @@ on:
         required: false
         type: string
         description: Nais cluster in dev to deploy to
-        default: 'dev-gcp'
+        default: 'dev-fss'
 
 jobs:
-  build-feature-gcp:
-    uses: navikt/dok-workflows/.github/workflows/build-app-gcp.yml@main
+  build-feature:
+    uses: navikt/dok-workflows/.github/workflows/build-app-gar.yml@main
     secrets: inherit
     with:
       java-version: ${{ inputs.java-version }}
   deploy-feature:
-    uses: navikt/dok-workflows/.github/workflows/deploy-all-dev-gcp.yml@main
-    needs: build-feature-gcp
+    uses: navikt/dok-workflows/.github/workflows/deploy-all-dev-gar.yml@main
+    needs: build-feature
     secrets: inherit
     with:
-      image: ${{ needs.build-feature-gcp.outputs.image }}
+      image: ${{ needs.build-feature.outputs.image }}
       nav-cluster: ${{ inputs.nav-cluster }}

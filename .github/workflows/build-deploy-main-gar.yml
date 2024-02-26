@@ -12,23 +12,23 @@ on:
         required: false
         type: string
         description: Nais cluster in p to deploy to
-        default: 'dev-gcp'
+        default: 'dev-fss'
 
 jobs:
-  build-main-gcp:
-    uses: navikt/dok-workflows/.github/workflows/build-app-gcp.yml@main
+  build-main:
+    uses: navikt/dok-workflows/.github/workflows/build-app-gar.yml@main
     secrets: inherit
     with:
       java-version: ${{ inputs.java-version }}
   deploy-main:
-    uses: navikt/dok-workflows/.github/workflows/deploy-all-dev-gcp.yml@main
-    needs: build-main-gcp
+    uses: navikt/dok-workflows/.github/workflows/deploy-all-dev-gar.yml@main
+    needs: build-main
     secrets: inherit
     with:
-      image: ${{ needs.build-main-gcp.outputs.image }}
+      image: ${{ needs.build-main.outputs.image }}
       nav-cluster: ${{ inputs.nav-cluster }}
   draft-release:
-    uses: navikt/dok-workflows/.github/workflows/release-draft-gcp.yml@main
-    needs: build-main-gcp
+    uses: navikt/dok-workflows/.github/workflows/release-draft-gar.yml@main
+    needs: build-main
     with:
-      tag: ${{ needs.build-main-gcp.outputs.tag }}
+      tag: ${{ needs.build-main.outputs.tag }}

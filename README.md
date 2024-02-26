@@ -15,8 +15,7 @@ Fellesrepo med reusuable workflows i Github Actions som Team Dokumentløysingar 
 
 ### Oppsett
 Kopier fylgjande (calling) workflows til workflows-mappa i repoet ein ynskjer å bruke reusable workflows.
-- fss: [`/eksempel/fss`](eksempel/.github/workflows/fss)
-- gcp: [`/eksempel/gcp`](eksempel/.github/workflows/gcp)
+[`/eksempel`](eksempel/.github/workflows/)
 Dersom eit prosjekt skal få laga PR frå Dependabot automatisk for avhengigheiter som skal bli oppdatert må også dependabot.yml bli kopiert inn i prosjektet.
 
 Under er ein oversikt på korleis mappestrukturen kan sjå ut i repoet (fss apper).

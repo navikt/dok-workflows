@@ -13,5 +13,7 @@ jobs:
       packages: write
       pull-requests: write
       id-token: write
-    uses: navikt/dok-workflows/.github/workflows/build-deploy-main-gcp.yml@main
+    uses: navikt/dok-workflows/.github/workflows/build-deploy-main-gar.yml@main
+    with:
+      java-version: '21'
     secrets: inherit
