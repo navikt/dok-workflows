@@ -8,6 +8,11 @@ on:
         type: string
         description: Java version to build with
         default: '17'
+      nav-cluster:
+        required: false
+        type: string
+        description: Nais cluster in dev to deploy to
+        default: 'dev-gcp'
 
 jobs:
   build-feature-gcp:
@@ -21,4 +26,4 @@ jobs:
     secrets: inherit
     with:
       image: ${{ needs.build-feature-gcp.outputs.image }}
-      nav-cluster: dev-gcp
+      nav-cluster: ${{ inputs.nav-cluster }}

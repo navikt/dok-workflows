@@ -10,7 +10,7 @@ on:
         required: false
         type: string
         description: Nais cluster in dev to deploy to
-        default: 'dev-fss'
+        default: 'dev-gcp'
 
 jobs:
   detect-dev-environments:

@@ -15,11 +15,6 @@ on:
         type: string
         description: Java version to build with
         default: '17'
-      nav-cluster:
-        required: false
-        type: string
-        description: Nais cluster in dev to deploy to
-        default: 'dev-fss'
 
 jobs:
   build-app:

@@ -8,6 +8,11 @@ on:
         type: string
         description: Java version to build with
         default: '17'
+      nav-cluster:
+        required: false
+        type: string
+        description: Nais cluster in p to deploy to
+        default: 'dev-gcp'
 
 jobs:
   build-main-gcp:
@@ -21,7 +26,7 @@ jobs:
     secrets: inherit
     with:
       image: ${{ needs.build-main-gcp.outputs.image }}
-      nav-cluster: dev-gcp
+      nav-cluster: ${{ inputs.nav-cluster }}
   draft-release:
     uses: navikt/dok-workflows/.github/workflows/release-draft-gcp.yml@main
     needs: build-main-gcp
