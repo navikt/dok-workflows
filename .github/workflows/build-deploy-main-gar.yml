@@ -11,7 +11,7 @@ on:
       nav-cluster:
         required: false
         type: string
-        description: Nais cluster in p to deploy to
+        description: Nais cluster in dev to deploy to
         default: 'dev-fss'
 
 jobs:
