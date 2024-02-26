@@ -17,19 +17,19 @@ on:
 
 jobs:
   build-main:
-    uses: navikt/dok-workflows/.github/workflows/wip/2_0_build-app.yml@main
+    uses: navikt/dok-workflows/.github/workflows/2_0_build-app.yml@main
     secrets: inherit
     with:
       java-version: ${{ inputs.java-version }}
   deploy-main:
-    uses: navikt/dok-workflows/.github/workflows/wip/3_0_deploy-all-dev.yml@main
+    uses: navikt/dok-workflows/.github/workflows/3_0_deploy-all-dev.yml@main
     needs: build-main
     secrets: inherit
     with:
       image: ${{ needs.build-main.outputs.image }}
       nav-cluster: ${{ inputs.nav-cluster }}
   draft-release:
-    uses: navikt/dok-workflows/.github/workflows/wip/release-draft.yml@main
+    uses: navikt/dok-workflows/.github/workflows/release-draft.yml@main
     needs: build-main
     with:
       tag: ${{ needs.build-main.outputs.tag }}

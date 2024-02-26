@@ -11,7 +11,7 @@ on:
 
 jobs:
   deploy-to-prod:
-    uses: navikt/dok-workflows/.github/workflows/wip/3_0_deploy-nais-app.yml@main
+    uses: navikt/dok-workflows/.github/workflows/3_0_deploy-nais-app.yml@main
     with:
       image: europe-north1-docker.pkg.dev/nais-management-233d/teamdokumenthandtering/${{ github.event.repository.name }}:${{ github.ref_name }}
       nav-cluster: ${{ inputs.nav-cluster }}

@@ -27,7 +27,7 @@ jobs:
         run: echo "List of dev environments to deploy to is ${{ steps.create-strategy-matrix.outputs.environments }}"
 
   deploy-to-dev:
-    uses: navikt/dok-workflows/.github/workflows/wip/3_0_deploy-nais-app.yml@main
+    uses: navikt/dok-workflows/.github/workflows/3_0_deploy-nais-app.yml@main
     needs: detect-dev-environments
     strategy:
       matrix:

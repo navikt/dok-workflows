@@ -17,12 +17,12 @@ on:
 
 jobs:
   build-feature:
-    uses: navikt/dok-workflows/.github/workflows/wip/2_0_build-app.yml@main
+    uses: navikt/dok-workflows/.github/workflows/2_0_build-app.yml@main
     secrets: inherit
     with:
       java-version: ${{ inputs.java-version }}
   deploy-feature:
-    uses: navikt/dok-workflows/.github/workflows/wip/3_0_deploy-all-dev.yml@main
+    uses: navikt/dok-workflows/.github/workflows/3_0_deploy-all-dev.yml@main
     needs: build-feature
     secrets: inherit
     with:
