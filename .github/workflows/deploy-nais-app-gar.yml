@@ -12,7 +12,7 @@ on:
         type: string
 
 jobs:
-  deploy-nais-app-gcp:
+  deploy-nais-app-gar:
     name: Deploy to ${{ inputs.nav-environment }}
     runs-on: ubuntu-latest
     steps:

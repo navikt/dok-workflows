@@ -1,4 +1,4 @@
-name: Deploy build-tag to prod
+name: Deploy build-tag to prod-<cluster>
 
 on:
   workflow_call:
@@ -6,12 +6,12 @@ on:
       nav-cluster:
         required: false
         type: string
-        description: Nais cluster in dev to deploy to
+        description: Nais cluster in p to deploy to
         default: 'prod-fss'
 
 jobs:
   deploy-to-prod:
-    uses: navikt/dok-workflows/.github/workflows/3_0_deploy-nais-app.yml@main
+    uses: navikt/dok-workflows/.github/workflows/deploy-nais-app-gar.yml@main
     with:
       image: europe-north1-docker.pkg.dev/nais-management-233d/teamdokumenthandtering/${{ github.event.repository.name }}:${{ github.ref_name }}
       nav-cluster: ${{ inputs.nav-cluster }}

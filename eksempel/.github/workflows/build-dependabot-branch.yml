@@ -11,7 +11,7 @@ permissions:
 jobs:
   build:
     if: ${{ github.actor == 'dependabot[bot]' }}
-    uses: navikt/dok-workflows/.github/workflows/build-app.yml@main
+    uses: navikt/dok-workflows/.github/workflows/build-app-gar.yml@main
     with:
       java-version: '21'
     secrets: inherit
