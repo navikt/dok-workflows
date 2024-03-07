@@ -21,4 +21,4 @@ jobs:
     with:
       java-version: '21'
       nav-cluster: 'dev-gcp'
-      should-byosbom: 'true'
+      should-byosbom: true
