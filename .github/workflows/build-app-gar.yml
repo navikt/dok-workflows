@@ -29,8 +29,8 @@ jobs:
       contents: read
       id-token: write
     outputs:
-      tag: ${{ steps.docker-build-push.outputs.tag }}
-      image: ${{ steps.docker-build-push.outputs.image }}
+      tag: ${{ inputs.should-byosbom && steps.docker-build-push-with-custom-sbom.outputs.tag || steps.docker-build-push.outputs.tag }}
+      image: ${{ inputs.should-byosbom && steps.docker-build-push-with-custom-sbom.outputs.image || steps.docker-build-push.outputs.image }}
     steps:
       # prebuild
       - name: Checkout code
@@ -78,7 +78,7 @@ jobs:
       # docker build with custom sbom to get nested dependencies in Dependency track
       - name: Build and push to GAR
         if: ${{ github.actor != 'dependabot[bot]' && inputs.should-byosbom == true }}
-        id: docker-build-push
+        id: docker-build-push-with-custom-sbom
         uses: nais/docker-build-push@v0
         with:
           team: teamdokumenthandtering
