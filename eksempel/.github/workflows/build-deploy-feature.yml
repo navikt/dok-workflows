@@ -14,6 +14,9 @@ jobs:
       packages: write
       id-token: write
     uses: navikt/dok-workflows/.github/workflows/build-deploy-feature-gar.yml@main
+    secrets: inherit
+    # Fjern 'java-version' for å defaulte til '17'
+    # Fjern 'nav-cluster' for å defaulte til 'dev-fss'
     with:
       java-version: '21'
-    secrets: inherit
+      nav-cluster: 'dev-gcp'
