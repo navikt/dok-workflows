@@ -17,6 +17,8 @@ jobs:
     secrets: inherit
     # Fjern 'java-version' for å defaulte til '17'
     # Fjern 'nav-cluster' for å defaulte til 'dev-fss'
+    # Fjern 'should-byosbom' for å defaulte til bruk av Trivy (flat avhengigheitsgraf)
     with:
       java-version: '21'
       nav-cluster: 'dev-gcp'
+      should-byosbom: 'true'
