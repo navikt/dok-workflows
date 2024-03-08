@@ -12,8 +12,6 @@ jobs:
       id-token: write
     uses: navikt/dok-workflows/.github/workflows/deploy-prod-gar.yml@main
     secrets: inherit
-    # Fjern 'java-version' for å defaulte til '17'
     # Fjern 'nav-cluster' for å defaulte til 'prod-fss'
     with:
-      java-version: '21'
       nav-cluster: 'prod-gcp'
