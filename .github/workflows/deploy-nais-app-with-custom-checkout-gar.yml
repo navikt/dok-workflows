@@ -26,7 +26,7 @@ jobs:
       - name: Check if nais/${{ inputs.nav-environment }}-config.json exists
         id: check-json
         run: echo "file-exists=$(test -f nais/${{ inputs.nav-environment }}-config.json && echo 'config_exists' || echo 'config_not_exists')" >> $GITHUB_OUTPUT
-      - uses: nais/deploy/actions/deploy@v1
+      - uses: nais/deploy/actions/deploy@v2
         if: ${{ steps.check-json.outputs.file-exists == 'config_exists' }}
         env:
           CLUSTER: ${{ inputs.nav-cluster }}
