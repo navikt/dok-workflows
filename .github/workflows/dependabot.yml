@@ -1,0 +1,20 @@
+name: Handle Dependabot PR branch
+
+on:
+  workflow_call:
+
+jobs:
+  build-deploy:
+    if: github.actor == 'dependabot[bot]'
+    steps:
+      - name: Determine semver version
+        id: dependabot-metadata
+        uses: dependabot/fetch-metadata@v2
+      - name: Handle major version
+        if: steps.dependabot-metadata.outputs.update-type == 'version-update:semver-major'
+        uses: navikt/dok-workflows/.github/workflows/dependabot-major.yml@main
+        secrets: inherit
+      - name: Handle minor or patch version
+        if: steps.dependabot-metadata.outputs.update-type != 'version-update:semver-major'
+        uses: navikt/dok-workflows/.github/workflows/dependabot-minor-or-patch.yml@main
+        secrets: inherit

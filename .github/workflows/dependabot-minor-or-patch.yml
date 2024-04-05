@@ -1,0 +1,22 @@
+name: Build and deploy Dependabot PR branch for minor/patch version - merge if sucessful
+
+on:
+  workflow_call:
+
+jobs:
+  build-deploy:
+    if: github.actor == 'dependabot[bot]'
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+    steps:
+      - name: Build branch
+        uses: navikt/dok-workflows/.github/workflows/build-deploy-feature-gar.yml@main
+        secrets: inherit
+  merge-branch:
+    needs: build-deploy
+    run: gh pr merge --auto --merge "$PR_URL"
+    env:
+      PR_URL: ${{ github.event.pull_request.html_url }}
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
