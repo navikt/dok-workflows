@@ -10,13 +10,14 @@ jobs:
       contents: read
       packages: write
       id-token: write
-    steps:
-      - name: Build branch
-        uses: navikt/dok-workflows/.github/workflows/build-deploy-feature-gar.yml@main
-        secrets: inherit
+    uses: navikt/dok-workflows/.github/workflows/build-deploy-feature-gar.yml@main
+
   merge-branch:
     needs: build-deploy
-    run: gh pr merge --auto --merge "$PR_URL"
-    env:
-      PR_URL: ${{ github.event.pull_request.html_url }}
-      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Merge PR
+        run: gh pr merge --auto --merge "$PR_URL"
+        env:
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

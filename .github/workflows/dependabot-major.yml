@@ -9,7 +9,4 @@ jobs:
     permissions:
       contents: read
       id-token: write
-    steps:
-      - name: Build branch
-        uses: navikt/dok-workflows/.github/workflows/build-app-gar.yml@main
-        secrets: inherit
+    uses: navikt/dok-workflows/.github/workflows/build-app-gar.yml@main
