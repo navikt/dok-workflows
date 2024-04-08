@@ -12,14 +12,29 @@ jobs:
         id: dependabot-metadata
         uses: dependabot/fetch-metadata@v1
 
-  build:
+  build-for-major:
     needs: determine-semver-version
     if: github.actor == 'dependabot[bot]' && needs.determine-semver-version.outputs.update-type == 'version-update:semver-major'
-    uses: navikt/dok-workflows/.github/workflows/dependabot-major.yml@main
-    secrets: inherit
+    permissions:
+      contents: read
+      id-token: write
+    uses: navikt/dok-workflows/.github/workflows/build-app-gar.yml@main
 
   build-deploy:
     needs: determine-semver-version
     if: github.actor == 'dependabot[bot]' && needs.determine-semver-version.outputs.update-type != 'version-update:semver-major'
-    uses: navikt/dok-workflows/.github/workflows/dependabot-minor-or-patch.yml@main
-    secrets: inherit
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+    uses: navikt/dok-workflows/.github/workflows/build-deploy-feature-gar.yml@main
+
+  merge-branch:
+    needs: build-deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Merge PR
+        run: gh pr merge --auto --merge "$PR_URL"
+        env:
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
