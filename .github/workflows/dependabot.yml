@@ -4,17 +4,22 @@ on:
   workflow_call:
 
 jobs:
-  build-deploy:
+  determine-semver-version:
     if: github.actor == 'dependabot[bot]'
+    runs-on: ubuntu-latest
     steps:
-      - name: Determine semver version
+      - name: Fetch Dependabot metadata
         id: dependabot-metadata
-        uses: dependabot/fetch-metadata@v2
-      - name: Handle major version
-        if: steps.dependabot-metadata.outputs.update-type == 'version-update:semver-major'
-        uses: navikt/dok-workflows/.github/workflows/dependabot-major.yml@main
-        secrets: inherit
-      - name: Handle minor or patch version
-        if: steps.dependabot-metadata.outputs.update-type != 'version-update:semver-major'
-        uses: navikt/dok-workflows/.github/workflows/dependabot-minor-or-patch.yml@main
-        secrets: inherit
+        uses: dependabot/fetch-metadata@v1
+
+  build:
+    needs: determine-semver-version
+    if: github.actor == 'dependabot[bot]' && needs.determine-semver-version.outputs.update-type == 'version-update:semver-major'
+    uses: navikt/dok-workflows/.github/workflows/dependabot-major.yml@main
+    secrets: inherit
+
+  build-deploy:
+    needs: determine-semver-version
+    if: github.actor == 'dependabot[bot]' && needs.determine-semver-version.outputs.update-type != 'version-update:semver-major'
+    uses: navikt/dok-workflows/.github/workflows/dependabot-minor-or-patch.yml@main
+    secrets: inherit
