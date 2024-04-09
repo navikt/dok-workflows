@@ -16,7 +16,7 @@ on:
 
 jobs:
   build-feature:
-    uses: navikt/dok-workflows/.github/workflows/build-app-gar.yml@main
+    uses: navikt/dok-workflows/.github/workflows/build-app-gar-with-dependabot.yml@main
     secrets: inherit
     with:
       java-version: ${{ inputs.java-version }}
