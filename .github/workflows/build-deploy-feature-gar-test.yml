@@ -22,6 +22,7 @@ jobs:
         run: gh pr edit "$PR_URL" --add-label manuell_pr --repo $GITHUB_REPOSITORY
         env:
           PR_URL: ${{ github.event.pull_request.html_url }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   build-feature:
     uses: navikt/dok-workflows/.github/workflows/build-app-gar.yml@main
     secrets: inherit
