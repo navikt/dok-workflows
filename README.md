@@ -3,6 +3,8 @@ Fellesrepo med reusuable workflows i Github Actions som Team Dokumentløysingar 
 
 ## Tilgjengelege workflows for app
 - `build-dependabot-branch.yml`: unnlat å deploye branches oppretta av dependabot
+- `label-dependabot-pr.yml`: label Dependabot-PR som automerge dersom bygget køyrer grønt
+- `merge-dependabot-pr.yml`: merge Dependabot-PR og trigg `build-deploy-main.yml`
 - `build-deploy-feature.yml`: bygg og deploy feature-branch til alle dev-miljø (q*)
 - `build-deploy-main.yml`: bygg og deploy main-branch til alle dev-miljø (q*), lag release draft
 - `deploy-prod.yml`: deploy image til prod-miljø
