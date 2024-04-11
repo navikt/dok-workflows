@@ -1,9 +1,21 @@
 name: Label dependabot pr
 on:
   workflow_call:
+    inputs:
+      java-version:
+        required: false
+        type: string
+        description: Java version to build with
+        default: '17'
 
 jobs:
+  build:
+    uses: navikt/dok-workflows/.github/workflows/build-app-gar.yml@main
+    secrets: inherit
+    with:
+      java-version: ${{ inputs.java-version }}
   label-pr:
+    needs: build
     runs-on: ubuntu-latest
     if: ${{ github.event.pull_request.user.login == 'dependabot[bot]' && !github.event.pull_request.head.repo.fork }}
     timeout-minutes: 15
