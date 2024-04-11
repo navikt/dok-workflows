@@ -2,8 +2,6 @@ name: Label Dependabot PR on successful build
 on:
   pull_request:
     types: [opened]
-    branches:
-      - 'dependabot/**'
 
 jobs:
   label-dependabot-pr:
@@ -13,5 +11,6 @@ jobs:
       contents: read
       id-token: write
       packages: write
+    if: ${{ github.actor == 'dependabot[bot]' }}
     uses: navikt/dok-workflows/.github/workflows/label-dependabot-pr.yml@main
     secrets: inherit
