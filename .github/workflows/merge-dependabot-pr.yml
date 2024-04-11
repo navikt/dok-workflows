@@ -13,8 +13,6 @@ jobs:
     timeout-minutes: 15
     steps:
       - uses: actions/github-script@v7
-        env:
-          DEPLOY_BRANCH: ${{inputs.name-of-main-branch}}
         with:
           script: |
             const today = new Date();
@@ -127,7 +125,7 @@ jobs:
                         owner: context.repo.owner,
                         repo: context.repo.repo,
                         workflow_id: 'build-deploy-main.yml',
-                        ref: $DEPLOY_BRANCH,
+                        ref: `${{ inputs.name-of-main-branch }}`,
                     }
                 )
             } else {
