@@ -127,7 +127,7 @@ jobs:
                         owner: context.repo.owner,
                         repo: context.repo.repo,
                         workflow_id: 'build-deploy-main.yml',
-                        ref: ${DEPLOY_BRANCH},
+                        ref: $DEPLOY_BRANCH,
                     }
                 )
             } else {
