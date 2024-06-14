@@ -75,6 +75,9 @@ jobs:
           mvn versions:set -DnewVersion="$( git rev-parse --short HEAD )"
           mvn versions:commit
       - name: Build with Maven
+        # Token used by npm
+        env:
+          NPM_TOKEN: ${{ secrets.READER_TOKEN }}
         run: mvn --batch-mode --update-snapshots -s settings.xml --global-toolchains toolchains.xml verify
       # docker build with custom sbom to get nested dependencies in Dependency track
       - name: Build and push to GAR with custom SBOM
