@@ -89,7 +89,7 @@ jobs:
           pull: true
           project_id: ${{ vars.NAIS_MANAGEMENT_PROJECT_ID }}
           identity_provider: ${{ secrets.NAIS_WORKLOAD_IDENTITY_PROVIDER }}
-          byosbom: target/bom.json
+          byosbom: target/classes/META-INF/sbom/application.cdx.json
       # docker build using trivy
       - name: Build and push to GAR
         if: ${{ github.actor != 'dependabot[bot]' && inputs.should-byosbom == false }}
