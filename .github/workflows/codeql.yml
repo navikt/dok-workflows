@@ -7,7 +7,7 @@ on:
         required: false
         type: string
         description: Java version to build with
-        default: '17'
+        default: '21'
 
 jobs:
   analyze:
