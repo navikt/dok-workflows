@@ -43,7 +43,6 @@ jobs:
         with:
           languages: ${{ matrix.language }}
           build-mode: ${{ matrix.build-mode }}
-          tools: ${{ inputs.codeql-version && format('https://github.com/github/codeql-action/releases/download/codeql-bundle-v{0}/codeql-bundle-linux64.tar.gz', inputs.codeql-version) || null }}
           # If you wish to specify custom queries, you can do so here or in a config file.
           # By default, queries listed here will override any specified in a config file.
           # Prefix the list here with "+" to use these queries and those in the config file.
