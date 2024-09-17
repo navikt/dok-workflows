@@ -19,16 +19,22 @@ jobs:
     name: Analyze
     runs-on: ubuntu-latest
     permissions:
+      # required for all workflows
+      security-events: write
+
+      # required to fetch internal or private CodeQL packs
+      packages: read
+
+      # only required for workflows in private repositories
       actions: read
       contents: read
-      security-events: write
 
     strategy:
       fail-fast: false
       matrix:
         include:
         - language: java-kotlin
-        - build-mode: none
+          build-mode: none
 
     steps:
       - name: Checkout repository
