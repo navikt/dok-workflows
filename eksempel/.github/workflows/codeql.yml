@@ -1,6 +1,7 @@
 name: CodeQL
 
 on:
+  workflow_dispatch:
   schedule:
     - cron: '00 16 * * SUN'
 
@@ -12,6 +13,3 @@ jobs:
       security-events: write
     uses: navikt/dok-workflows/.github/workflows/codeql.yml@main
     secrets: inherit
-    # Fjern 'java-version' for å defaulte til '17'
-    with:
-      java-version: '21'
