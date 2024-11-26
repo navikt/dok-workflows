@@ -52,7 +52,7 @@ jobs:
         run: echo "Generated build tag is ${{ steps.generate-build-tag.outputs.build-tag }}"
   release-draft:
     if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main'
-    uses: navikt/dok-workflows/.github/workflows/release-draft-gar.yml@main
+    uses: navikt/dok-workflows/.github/workflows/release-draft.yml@main
     needs: build-and-test
     with:
       build-tag: ${{ needs.build-and-test.outputs.build-tag }}

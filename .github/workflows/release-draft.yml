@@ -1,0 +1,22 @@
+name: Release draft
+
+on:
+  workflow_call:
+    inputs:
+      build-tag:
+        required: true
+        type: string
+
+jobs:
+  create-release-draft:
+    permissions:
+      contents: write
+      pull-requests: write
+    runs-on: ubuntu-latest
+    steps:
+      - uses: release-drafter/release-drafter@3f0f87098bd6b5c5b9a36d49c41d998ea58f9348 # 6.0.0
+        with:
+          tag: ${{ inputs.build-tag }}
+          name: ${{ inputs.build-tag }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
