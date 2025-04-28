@@ -13,7 +13,7 @@ jobs:
   deploy-to-prod:
     uses: navikt/dok-workflows/.github/workflows/deploy-nais-app-gar.yml@main
     with:
-      image: europe-north1-docker.pkg.dev/nais-management-233d/teamdokumenthandtering/${{ github.event.repository.name }}:${{ github.ref_name }}
+      image: europe-north1-docker.pkg.dev/nais-management-233d/teamdokumenthandtering/${{ github.event.repository.name }}:${{ github.event.release.tag_name }}
       nav-cluster: ${{ inputs.nav-cluster }}
       nav-environment: p
     secrets: inherit
