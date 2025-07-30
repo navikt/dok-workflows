@@ -8,6 +8,11 @@ on:
         type: string
         description: Java version to build with
         default: '17'
+      setup-latest-nodejs:
+        required: false
+        type: boolean
+        description: Run setup-node step
+        default: false
       nav-cluster:
         required: false
         type: string
@@ -25,6 +30,7 @@ jobs:
     secrets: inherit
     with:
       java-version: ${{ inputs.java-version }}
+      setup-latest-nodejs: ${{ inputs.setup-latest-nodejs }}
       should-byosbom: ${{ inputs.should-byosbom }}
   deploy-main:
     uses: navikt/dok-workflows/.github/workflows/deploy-all-dev-gar.yml@main
