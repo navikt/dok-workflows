@@ -50,7 +50,7 @@ jobs:
           distribution: 'temurin'
       - name: Set up Node Latest
         if: inputs.setup-latest-nodejs
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: "latest"
       - name: Generate ~/.m2/repository cache key
