@@ -1,0 +1,37 @@
+name: Determine Java version
+
+on:
+  workflow_call:
+    outputs:
+      java-version:
+        description: "Determined Java version"
+        value: ${{ jobs.determine-java-version.outputs.java-version }}
+
+jobs:
+  determine-java-version:
+    name: Determine Java version
+    runs-on: ubuntu-latest
+    outputs:
+      java-version: ${{ steps.extract-java-version.outputs.java-version }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Maven
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17' #Brukes til å kjøre Maven
+
+      - name: Extract Java version from pom.xml
+        id: extract-java-version
+        run: |
+          JAVA_VERSION=$(mvn help:evaluate -Dexpression=java.version -q -DforceStdout 2>/dev/null || echo "")
+          if [ -z "$JAVA_VERSION" ]; then
+            JAVA_VERSION="17"
+            echo "No Java version found in pom.xml, using default: $JAVA_VERSION"
+          else
+            JAVA_VERSION=$(echo "$JAVA_VERSION" | cut -d'.' -f1)
+            echo "Extracted Java version from pom.xml: $JAVA_VERSION"
+          fi
+          echo "java-version=$JAVA_VERSION" >> $GITHUB_OUTPUT
