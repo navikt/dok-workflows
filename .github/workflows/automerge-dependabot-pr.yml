@@ -1,24 +1,28 @@
 name: Automerge Dependabot PRs, build and deploy to dev, and create release draft
 
 on:
-  workflow_dispatch:
+  workflow_call:
     inputs:
       ignored-dependencies:
         description: 'Komma-separert liste over dependencies som ikke skal automerges'
+        type: string
         required: false
         default: ''
       semver-filter:
         description: 'Semver filter for hvilke versjoner som kan automerges'
+        type: string
         required: false
         default: 'patch,minor'
       always-allow:
         description: 'Komma-separert liste over dependencies som skal automerges, men som ikke bruker semver'
+        type: string
         required: false
         default: '*' #Automerge alle ikke-semver oppdateringer
       java-version:
         description: 'Java version to build with'
+        type: string
         required: false
-        default: '17'
+        default: ''
 
 jobs:
   automerge:
@@ -41,11 +45,22 @@ jobs:
           semver-filter: ${{ github.event.inputs.semver-filter }}
           always-allow: ${{ github.event.inputs.always-allow }}
 
+  determine-java-version:
+    needs: automerge
+    if: needs.automerge.outputs.merged-pr-count > 0 && github.event.inputs.java-version == ''
+    runs-on: ubuntu-latest
+    outputs:
+      java-version: ${{ steps.determine-java-version.outputs.java-version }}
+    steps:
+      - name: Determine Java version
+        id: determine-java-version
+        uses: navikt/dok-workflows/.github/workflows/determine-java-version.yml@main
+
   #Bygger, deployer til dev, og lager release draft
   build-and-deploy:
-    needs: automerge
+    needs: determine-java-version
     if: needs.automerge.outputs.merged-pr-count > 0
     uses: navikt/dok-workflows/.github/workflows/build-deploy-main-gar.yml@main
     with:
-      java-version: ${{ github.event.inputs.java-version }}
+      java-version: ${{ steps.determine-java-version.outputs.java-version }}
     secrets: inherit
