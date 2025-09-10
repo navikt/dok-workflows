@@ -15,6 +15,10 @@ on:
         description: 'Komma-separert liste over dependencies som skal automerges, men som ikke bruker semver'
         required: false
         default: '*' #Automerge alle ikke-semver oppdateringer
+      java-version:
+        description: 'Java version to build with'
+        required: false
+        default: '17'
 
 jobs:
   automerge:
@@ -41,5 +45,7 @@ jobs:
   build-and-deploy:
     needs: automerge
     if: needs.automerge.outputs.merged-pr-count > 0
-    uses: navigate/dok-workflows/.github/workflows/build-deploy-main-gar.yml
+    uses: navikt/dok-workflows/.github/workflows/build-deploy-main-gar.yml@main
+    with:
+      java-version: ${{ github.event.inputs.java-version }}
     secrets: inherit
