@@ -10,6 +10,7 @@ Fellesrepo med reusuable workflows i Github Actions som Team Dokumentløysingar 
 - `deploy-prod.yml`: deploy image til prod-miljø
 - `codeql.yml`: statisk analyse av koden med [CodeQL](https://docs.github.com/en/code-security/code-scanning/introduction-to-code-scanning/about-code-scanning-with-codeql) (query pack: `security-and-quality`)
 - `deploy-manual.yml`: manuell deploy av tag/branch til miljø
+- `automerge-dependabot-pr.yml`: automatisk merge av Dependabot-PR
 
 ## Tilgjengelege workflows for artifakt
 - `build-artifact.yml`: bygg artifakt og lag release draft viss det er main/master-branch
