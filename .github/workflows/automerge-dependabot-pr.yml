@@ -1,4 +1,4 @@
-name: Automerge Dependabot PRs
+name: Automerge Dependabot PRs, build and deploy to dev, and create release draft
 
 on:
   workflow_dispatch:
@@ -31,22 +31,15 @@ jobs:
         uses: navikt/automerge-dependabot@main
         with:
           token: ${{ github.token }}
-          minimum-age-of-pr: '7'
+          minimum-age-of-pr: '5'
           blackout-periods: 'Sat,Sun,May 1,May 17,Dec 24-Jan 3'
           ignored-dependencies: ${{ github.event.inputs.ignored-dependencies }}
           semver-filter: ${{ github.event.inputs.semver-filter }}
           always-allow: ${{ github.event.inputs.always-allow }}
 
-  build-app:
+  #Bygger, deployer til dev, og lager release draft
+  build-and-deploy:
     needs: automerge
     if: needs.automerge.outputs.merged-pr-count > 0
-    uses: navikt/dok-workflows/.github/workflows/build-app-gar.yml@main
-    secrets: inherit
-
-  release-draft:
-    needs: build-app
-    if: needs.automerge.outputs.merged-pr-count > 0
-    uses: navikt/dok-workflows/.github/workflows/release-draft-gar.yml@main
-    with:
-      tag: ${{ needs.build-app.outputs.tag }}
+    uses: navigate/dok-workflows/.github/workflows/build-deploy-main-gar.yml
     secrets: inherit
