@@ -49,6 +49,11 @@ jobs:
           ignored-dependencies: ${{ github.event.inputs.ignored-dependencies }}
           semver-filter: ${{ github.event.inputs.semver-filter }}
           always-allow: ${{ github.event.inputs.always-allow }}
+      - name: Automerge results
+        run: |
+          echo "Automerge Resultat:"
+          echo "Antall mergede PRer: ${{ steps.automerge.outputs.merged-pr-count }}"
+          echo "Fortsetter med build/deploy: ${{ steps.automerge.outputs.merged-pr-count != '0' }}"
 
   determine-java-version:
     needs: automerge
