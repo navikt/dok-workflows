@@ -52,20 +52,15 @@ jobs:
 
   determine-java-version:
     needs: automerge
-    if: needs.automerge.outputs.merged-pr-count > 0 && github.event.inputs.java-version == ''
-    runs-on: ubuntu-latest
-    outputs:
-      java-version: ${{ steps.determine-java-version.outputs.java-version }}
-    steps:
-      - name: Determine Java version
-        id: determine-java-version
-        uses: navikt/dok-workflows/.github/workflows/determine-java-version.yml@main
+    if: needs.automerge.outputs.merged-pr-count > 0
+    uses: navikt/dok-workflows/.github/workflows/determine-java-version.yml@main
+    secrets: inherit
 
   #Bygger, deployer til dev, og lager release draft
   build-and-deploy:
-    needs: determine-java-version
+    needs: [automerge, determine-java-version]
     if: needs.automerge.outputs.merged-pr-count > 0
     uses: navikt/dok-workflows/.github/workflows/build-deploy-main-gar.yml@main
     with:
-      java-version: ${{ needs.determine-java-version.outputs.java-version }}
+      java-version: ${{ github.event.inputs.java-version || needs.determine-java-version.outputs.java-version }}
     secrets: inherit
