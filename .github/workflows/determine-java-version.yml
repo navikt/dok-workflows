@@ -17,21 +17,18 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v5
 
-      - name: Set up Maven
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'temurin'
-          java-version: '21' #Brukes til å kjøre Maven
-
       - name: Extract Java version from pom.xml
         id: extract-java-version
         run: |
-          JAVA_VERSION=$(mvn help:evaluate -Dexpression=java.version -q -DforceStdout 2>/dev/null || echo "")
+          #Hent java versjon fra pom.xml. Ser etter første property på formatet <java.version>...</java.version>
+          JAVA_VERSION=$(sed -n 's/.*<java\.version>\([^<]*\)<\/java\.version>.*/\1/p' pom.xml | head -1)
+          
           if [ -z "$JAVA_VERSION" ]; then
-            JAVA_VERSION="17"
-            echo "No Java version found in pom.xml, using default: $JAVA_VERSION"
+            JAVA_VERSION="21"
+            echo "Fant ikke java versjon i pom.xml, defaulter til: $JAVA_VERSION"
           else
+            #Hent major versjon (dvs "21" fra "21.0.8")
             JAVA_VERSION=$(echo "$JAVA_VERSION" | cut -d'.' -f1)
-            echo "Extracted Java version from pom.xml: $JAVA_VERSION"
+            echo "Fant java versjon $JAVA_VERSION i pom.xml"
           fi
           echo "java-version=$JAVA_VERSION" >> $GITHUB_OUTPUT
