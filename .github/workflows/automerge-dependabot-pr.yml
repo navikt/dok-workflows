@@ -67,5 +67,5 @@ jobs:
     if: needs.automerge.outputs.merged-pr-count > 0
     uses: navikt/dok-workflows/.github/workflows/build-deploy-main-gar.yml@main
     with:
-      java-version: ${{ steps.determine-java-version.outputs.java-version }}
+      java-version: ${{ needs.determine-java-version.outputs.java-version }}
     secrets: inherit
