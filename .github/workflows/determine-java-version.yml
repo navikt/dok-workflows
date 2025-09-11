@@ -15,13 +15,13 @@ jobs:
       java-version: ${{ steps.extract-java-version.outputs.java-version }}
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Set up Maven
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
-          java-version: '17' #Brukes til å kjøre Maven
+          java-version: '21' #Brukes til å kjøre Maven
 
       - name: Extract Java version from pom.xml
         id: extract-java-version

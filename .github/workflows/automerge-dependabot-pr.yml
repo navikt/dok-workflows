@@ -18,6 +18,11 @@ on:
         type: string
         required: false
         default: '*' #Automerge alle ikke-semver oppdateringer
+      minimum-age-of-pr:
+        description: 'Minimum alder på PR i dager før den automerges'
+        type: string
+        required: false
+        default: '5'
       java-version:
         description: 'Java version to build with'
         type: string
@@ -39,7 +44,7 @@ jobs:
         uses: navikt/automerge-dependabot@main
         with:
           token: ${{ github.token }}
-          minimum-age-of-pr: '5'
+          minimum-age-of-pr: ${{ github.event.inputs.minimum-age-of-pr }}
           blackout-periods: 'Sat,Sun,May 1,May 17,Dec 24-Jan 3'
           ignored-dependencies: ${{ github.event.inputs.ignored-dependencies }}
           semver-filter: ${{ github.event.inputs.semver-filter }}
