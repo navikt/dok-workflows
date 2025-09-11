@@ -15,7 +15,7 @@ jobs:
       java-version: ${{ steps.extract-java-version.outputs.java-version }}
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Set up Maven
         uses: actions/setup-java@v4
