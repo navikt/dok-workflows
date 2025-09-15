@@ -4,27 +4,27 @@ on:
   workflow_call:
     inputs:
       ignored-dependencies:
-        description: 'Komma-separert liste over dependencies som ikke skal automerges'
+        description: Komma-separert liste over dependencies som ikke skal automerges
         type: string
         required: false
         default: ''
       semver-filter:
-        description: 'Semver filter for hvilke versjoner som kan automerges'
+        description: Semver filter for hvilke versjoner som kan automerges
         type: string
         required: false
         default: 'patch,minor'
       always-allow:
-        description: 'Komma-separert liste over dependencies som skal automerges, men som ikke bruker semver'
+        description: Komma-separert liste over dependencies som skal automerges, men som ikke bruker semver
         type: string
         required: false
         default: '*' #Automerge alle ikke-semver oppdateringer
       minimum-age-of-pr:
-        description: 'Minimum alder på PR i dager før den automerges'
+        description: Minimum alder på PR i dager før den automerges
         type: string
         required: false
         default: '5'
       java-version:
-        description: 'Java version to build with'
+        description: Java version som skal brukes til bygging
         type: string
         required: false
         default: ''
@@ -44,11 +44,11 @@ jobs:
         uses: navikt/automerge-dependabot@main
         with:
           token: ${{ github.token }}
-          minimum-age-of-pr: ${{ github.event.inputs.minimum-age-of-pr }}
+          minimum-age-of-pr: ${{ inputs.minimum-age-of-pr }}
           blackout-periods: 'Sat,Sun,May 1,May 17,Dec 24-Jan 3'
-          ignored-dependencies: ${{ github.event.inputs.ignored-dependencies }}
-          semver-filter: ${{ github.event.inputs.semver-filter }}
-          always-allow: ${{ github.event.inputs.always-allow }}
+          ignored-dependencies: ${{ inputs.ignored-dependencies }}
+          semver-filter: ${{ inputs.semver-filter }}
+          always-allow: ${{ inputs.always-allow }}
       - name: Automerge results
         run: |
           echo "Automerge Resultat:"
