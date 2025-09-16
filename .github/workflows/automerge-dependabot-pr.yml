@@ -45,7 +45,7 @@ jobs:
         with:
           token: ${{ github.token }}
           minimum-age-of-pr: ${{ inputs.minimum-age-of-pr }}
-          blackout-periods: 'Sat,Sun,May 1,May 17,Dec 24-Jan 3'
+          blackout-periods: 'Sat,Sun,May 1,May 17,Sep 16,Dec 24-Jan 3'
           ignored-dependencies: ${{ inputs.ignored-dependencies }}
           semver-filter: ${{ inputs.semver-filter }}
           always-allow: ${{ inputs.always-allow }}
