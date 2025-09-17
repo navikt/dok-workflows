@@ -27,8 +27,12 @@ on:
         default: false
 
 jobs:
+  determine-java-version:
+    uses: navikt/dok-workflows/.github/workflows/determine-java-version.yml@main
+    secrets: inherit
   build-app:
     name: Build app
+    needs: determine-java-version
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -43,14 +47,10 @@ jobs:
         # checkout gir shallow copy - fetch-depth: 0 vil tilgjengeliggjøre tags
         with:
           fetch-depth: 0
-      - name: Determine Java version
-        if: inputs.java-version == ''
-        id: determine-java-version
-        uses: navikt/dok-workflows/.github/workflows/determine-java-version.yml@main
-      - name: Set up JDK${{ inputs.java-version || steps.determine-java-version.outputs.java-version }}
+      - name: Set up JDK${{ inputs.java-version || needs.determine-java-version.outputs.java-version }}
         uses: actions/setup-java@v4
         with:
-          java-version: ${{ inputs.java-version || steps.determine-java-version.outputs.java-version }}
+          java-version: ${{ inputs.java-version || needs.determine-java-version.outputs.java-version }}
           distribution: 'temurin'
       - name: Set up Node Latest
         if: inputs.setup-latest-nodejs
