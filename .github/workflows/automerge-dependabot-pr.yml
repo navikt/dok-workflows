@@ -70,7 +70,7 @@ jobs:
     uses: navikt/dok-workflows/.github/workflows/build-app-gar.yml@main
     secrets: inherit
     with:
-      java-version: ${{ github.event.inputs.java-version || needs.determine-java-version.outputs.java-version }}
+      java-version: ${{ inputs.java-version || needs.determine-java-version.outputs.java-version }}
 
   deploy-main:
     needs: [build-main, automerge]
