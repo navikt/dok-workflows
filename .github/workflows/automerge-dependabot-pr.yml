@@ -24,12 +24,12 @@ on:
         required: false
         default: '5'
       java-version:
-        description: Java version som skal brukes til bygging
+        description: Java version som skal brukes til bygging. Utledes om ikke angitt
         type: string
         required: false
         default: ''
       deploy-and-draft-release:
-        description: Deploy til dev og lag release draft. Relevant for nais-job apper som ikke skal deployse eller releases
+        description: Deploy til dev og lag release draft. Relevant for nais-job apper som ikke skal deployes eller releases
         type: boolean
         required: false
         default: true
@@ -60,22 +60,16 @@ jobs:
           echo "Antall mergede PRer: ${{ steps.automerge.outputs.merged-pr-count }}"
           echo "Fortsetter med build/deploy: ${{ steps.automerge.outputs.merged-pr-count != '0' }}"
 
-  determine-java-version:
-    needs: automerge
-    if: needs.automerge.outputs.merged-pr-count != '0'
-    uses: navikt/dok-workflows/.github/workflows/determine-java-version.yml@main
-    secrets: inherit
-
   #Bygg, deploy til dev, og lag release draft. Disse stegne gjør det samme som build-deploy-main-gar.yml,
   #men GHA har en "kall dybde" grense på max 3, så buid-deploy-main-gar.yml kan ikke kalles direkte herfra.
   #Se https://github.com/orgs/community/discussions/8488
   build-main:
-    needs: [automerge, determine-java-version]
+    needs: automerge
     if: needs.automerge.outputs.merged-pr-count != '0'
     uses: navikt/dok-workflows/.github/workflows/build-app-gar.yml@main
     secrets: inherit
     with:
-      java-version: ${{ inputs.java-version || needs.determine-java-version.outputs.java-version }}
+      java-version: ${{ inputs.java-version }}
 
   deploy-main:
     needs: [build-main, automerge]
