@@ -28,6 +28,11 @@ on:
         type: string
         required: false
         default: ''
+      deploy-and-draft-release:
+        description: Deploy til dev og lag release draft. Relevant for nais-job apper som ikke skal deployse eller releases
+        type: boolean
+        required: false
+        default: true
 
 jobs:
   automerge:
@@ -74,7 +79,7 @@ jobs:
 
   deploy-main:
     needs: [build-main, automerge]
-    if: needs.automerge.outputs.merged-pr-count != '0'
+    if: needs.automerge.outputs.merged-pr-count != '0' && inputs.deploy-and-draft-release
     uses: navikt/dok-workflows/.github/workflows/deploy-all-dev-gar.yml@main
     secrets: inherit
     with:
@@ -82,7 +87,7 @@ jobs:
 
   draft-release:
     needs: [build-main, automerge]
-    if: needs.automerge.outputs.merged-pr-count != '0'
+    if: needs.automerge.outputs.merged-pr-count != '0' && inputs.deploy-and-draft-release
     uses: navikt/dok-workflows/.github/workflows/release-draft-gar.yml@main
     with:
       tag: ${{ needs.build-main.outputs.tag }}
