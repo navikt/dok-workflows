@@ -14,10 +14,10 @@ on:
         required: false
         default: 'patch,minor'
       always-allow:
-        description: Komma-separert liste over dependencies som skal automerges, men som ikke bruker semver
+        description: Komma-separert liste over dependencies som alltid skal automerges, uavhengig av semver-filter
         type: string
         required: false
-        default: '*' #Automerge alle ikke-semver oppdateringer
+        default: ''
       minimum-age-of-pr:
         description: Minimum alder på PR i dager før den automerges
         type: string
