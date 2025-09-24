@@ -12,7 +12,7 @@ on:
         description: Semver filter for hvilke versjoner som kan automerges
         type: string
         required: false
-        default: 'patch,minor'
+        default: 'patch,minor,unknown'
       always-allow:
         description: Komma-separert liste over dependencies som alltid skal automerges, uavhengig av semver-filter
         type: string
