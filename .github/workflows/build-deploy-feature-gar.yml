@@ -24,9 +24,9 @@ jobs:
     uses: navikt/dok-workflows/.github/workflows/build-app-gar.yml@main
     secrets: inherit
     with:
-      java-version: ${{ inputs.java-version }}
       setup-latest-nodejs: ${{ inputs.setup-latest-nodejs }}
   deploy-feature:
+    if: ${{ github.actor != 'dependabot[bot]' }}
     uses: navikt/dok-workflows/.github/workflows/deploy-all-dev-gar.yml@main
     needs: build-feature
     secrets: inherit
