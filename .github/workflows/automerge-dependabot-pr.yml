@@ -58,4 +58,3 @@ jobs:
         run: |
           echo "Automerge Resultat:"
           echo "Antall mergede PRer: ${{ steps.automerge.outputs.merged-pr-count }}"
-          echo "Fortsetter med build/deploy: ${{ steps.automerge.outputs.merged-pr-count != '0' }}"
