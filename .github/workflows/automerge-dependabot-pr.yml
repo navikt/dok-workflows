@@ -58,3 +58,30 @@ jobs:
         run: |
           echo "Automerge Resultat:"
           echo "Antall mergede PRer: ${{ steps.automerge.outputs.merged-pr-count }}"
+          echo "Fortsetter med build/deploy: ${{ steps.automerge.outputs.merged-pr-count != '0' }}"
+
+  #Bygg, deploy til dev, og lag release draft. Disse stegne gjør det samme som build-deploy-main-gar.yml,
+  #men GHA har en "kall dybde" grense på max 3, så buid-deploy-main-gar.yml kan ikke kalles direkte herfra.
+  #Se https://github.com/orgs/community/discussions/8488
+  build-main:
+    needs: automerge
+    if: needs.automerge.outputs.merged-pr-count != '0'
+    uses: navikt/dok-workflows/.github/workflows/build-app-gar.yml@main
+    secrets: inherit
+    with:
+      java-version: ${{ inputs.java-version }}
+
+  deploy-main:
+    needs: [build-main, automerge]
+    if: needs.automerge.outputs.merged-pr-count != '0' && inputs.deploy-and-draft-release
+    uses: navikt/dok-workflows/.github/workflows/deploy-all-dev-gar.yml@main
+    secrets: inherit
+    with:
+      image: ${{ needs.build-main.outputs.image }}
+
+  draft-release:
+    needs: [build-main, automerge]
+    if: needs.automerge.outputs.merged-pr-count != '0' && inputs.deploy-and-draft-release
+    uses: navikt/dok-workflows/.github/workflows/release-draft-gar.yml@main
+    with:
+      tag: ${{ needs.build-main.outputs.tag }}
