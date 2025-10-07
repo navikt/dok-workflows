@@ -7,11 +7,15 @@ on:
         required: false
         type: string
         description: Java version to build with
-        default: '17'
+        default: '21'
 
 jobs:
+  determine-java-version:
+    uses: navikt/dok-workflows/.github/workflows/determine-java-version.yml@main
+    secrets: inherit
   build-and-test:
     name: Build and test artifact
+    needs: determine-java-version
     runs-on: ubuntu-latest
     outputs:
       build-tag: ${{ steps.generate-build-tag.outputs.build-tag }}
@@ -33,10 +37,10 @@ jobs:
             { "id": "github", "username": "x-access-token", "password": "${{ secrets.READER_TOKEN }}" }
           ]'
           output_file: settings.xml
-      - name: Set up JDK${{ inputs.java-version }} and cache dependencies
+      - name: Set up JDK${{ inputs.java-version || needs.determine-java-version.outputs.java-version }} and cache dependencies
         uses: actions/setup-java@v4
         with:
-          java-version: ${{ inputs.java-version }}
+          java-version: ${{ inputs.java-version || needs.determine-java-version.outputs.java-version }}
           distribution: 'temurin'
           cache: 'maven'
       - name: Download toolchain file
