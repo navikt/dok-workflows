@@ -15,7 +15,7 @@ jobs:
       id-token: write
     uses: navikt/dok-workflows/.github/workflows/build-deploy-main-gar.yml@main
     secrets: inherit
-    # Fjern 'java-version' for å defaulte til '17'
+    # Fjern 'java-version' for å bruke versjon i <java.version> fra pom.xml
     # Fjern 'nav-cluster' for å defaulte til 'dev-fss'
     # Fjern 'should-byosbom' for å defaulte til bruk av Trivy (flat avhengigheitsgraf)
     with:

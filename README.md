@@ -2,14 +2,11 @@
 Fellesrepo med reusuable workflows i Github Actions som Team Dokumentløysingar sine applikasjonar kan kalle.
 
 ## Tilgjengelege workflows for app
-- `build-dependabot-branch.yml`: unnlat å deploye branches oppretta av dependabot
-- `label-dependabot-pr.yml`: label Dependabot-PR som automerge dersom bygget køyrer grønt
-- `merge-dependabot-pr.yml`: merge Dependabot-PR og trigg `build-deploy-main.yml`
 - `build-deploy-feature.yml`: bygg og deploy feature-branch til alle dev-miljø (q*)
 - `build-deploy-main.yml`: bygg og deploy main-branch til alle dev-miljø (q*), lag release draft
+- `codeql.yml`: statisk analyse av koden med [CodeQL](https://docs.github.com/en/code-security/code-scanning/introduction-to-code-scanning/about-code-scanning-with-codeql) (query pack: `security-extended`)
 - `deploy-prod.yml`: deploy image til prod-miljø
-- `codeql.yml`: statisk analyse av koden med [CodeQL](https://docs.github.com/en/code-security/code-scanning/introduction-to-code-scanning/about-code-scanning-with-codeql) (query pack: `security-and-quality`)
-- `deploy-manual.yml`: manuell deploy av tag/branch til miljø
+- `manual-deploy.yml`: manuell deploy av tag/branch til miljø
 - `automerge-dependabot-pr.yml`: automatisk merge av Dependabot-PR
 
 ## Tilgjengelege workflows for artifakt
@@ -27,13 +24,14 @@ Under er ein oversikt på korleis mappestrukturen kan sjå ut i repoet (fss appe
 min-app/
 ├─ .github/
 │  ├─ workflows/
-│  │  ├─ build-dependabot-branch.yml
+│  │  ├─ automerge-dependabot-pr.yml
 │  │  ├─ build-deploy-feature.yml
 │  │  ├─ build-deploy-main.yml
 │  │  ├─ codeql.yml
-│  │  ├─ deploy-manual.yml
 │  │  ├─ deploy-prod.yaml
+│  │  ├─ manual-deploy.yml
 │  ├─ CODEOWNERS
+│  ├─ dependabot.yml
 │  ├─ release-drafter.yml
 ├─ nais/
 ├─ app/
