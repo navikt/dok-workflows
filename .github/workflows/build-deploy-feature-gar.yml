@@ -3,11 +3,6 @@ name: Build, deploy feature
 on:
   workflow_call:
     inputs:
-      java-version:
-        required: false
-        type: string
-        description: Java version to build with
-        default: '17'
       setup-latest-nodejs:
         required: false
         type: boolean
