@@ -15,7 +15,7 @@ jobs:
       java-version: ${{ steps.extract-java-version.outputs.java-version }}
     steps:
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Extract Java version from pom.xml
         id: extract-java-version
