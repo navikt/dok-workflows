@@ -62,7 +62,7 @@ jobs:
         run: echo "keyname=$(date +'maven-week-%U')" >> $GITHUB_OUTPUT
       - name: Cache ~/.m2/repository
         id: cache-m2-repository
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ~/.m2/repository
           key: ${{ steps.m2-cache-key.outputs.keyname }}
