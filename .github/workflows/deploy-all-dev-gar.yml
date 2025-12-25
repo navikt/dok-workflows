@@ -19,7 +19,7 @@ jobs:
     outputs:
       environments: ${{ steps.create-strategy-matrix.outputs.environments }}
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - id: create-strategy-matrix
         run: echo "environments=$(array=($(ls nais/q*config.json | sed -nr 's/nais\/(.*)\-config.json/\1/p')); printf '%s\n' "${array[@]}" | jq -R . | jq -s -c .)" >> $GITHUB_OUTPUT
       - id: print-dev-environments
