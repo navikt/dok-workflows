@@ -62,7 +62,7 @@ jobs:
         run: echo "yearweek=$(date +'%Y-%W')" >> $GITHUB_OUTPUT
       - name: Cache ~/.m2/repository
         id: cache-m2-repository
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ~/.m2/repository
           key: ${{ runner.os }}-maven-${{ steps.m2-cache-key.outputs.yearweek }}-${{ hashFiles('**/pom.xml') }}
