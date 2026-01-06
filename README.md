@@ -39,6 +39,7 @@ min-app/
 ├─ pom.xml
 ├─ Dockerfile
 ├─ README.md
+├─ LICENSE.md
 ```
 
 ## Andre spørsmål?
