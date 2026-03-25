@@ -38,6 +38,11 @@ on:
         type: boolean
         required: false
         default: false
+      nav-cluster:
+        description: Cluster bygget deployes til. dev-fss er standard
+        type: string
+        required: false
+        default: 'dev-fss'
 
 jobs:
   automerge:
@@ -91,6 +96,7 @@ jobs:
     secrets: inherit
     with:
       image: ${{ needs.build-main.outputs.image }}
+      nav-cluster: ${{ inputs.nav-cluster }}
 
   draft-release:
     needs: [build-main, automerge]
