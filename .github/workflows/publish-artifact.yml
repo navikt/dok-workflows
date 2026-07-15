@@ -17,7 +17,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v6
       - name: Create m2-settings
-        uses: whelk-io/maven-settings-xml-action@9dc09b23833fa9aa7f27b63db287951856f3433d # v22
+        uses: s4u/maven-settings-action@894661b3ddae382f1ae8edbeab60987e08cf0788 #v4.0.0
         with:
           repositories: '[
             { "id": "github", "url": "https://maven.pkg.github.com/navikt/maven-release", "releases": { "enabled": "true" }, "snapshots": { "enabled": "false" } },
@@ -27,7 +27,6 @@ jobs:
             { "id": "github", "username": "x-access-token", "password": "${{ secrets.READER_TOKEN }}" },
             { "id": "ghcr", "username": "${{ github.actor }}", "password": "${{ secrets.GITHUB_TOKEN }}" }
           ]'
-          output_file: settings.xml
       - name: Set up JDK${{ inputs.java-version }} and cache dependencies
         uses: actions/setup-java@v5
         with:
