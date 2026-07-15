@@ -43,7 +43,7 @@ jobs:
     steps:
       # prebuild
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         # checkout gir shallow copy - fetch-depth: 0 vil tilgjengeliggjøre tags
         with:
           fetch-depth: 0
