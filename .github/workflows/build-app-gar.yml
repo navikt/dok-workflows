@@ -70,7 +70,7 @@ jobs:
             ${{ runner.os }}-maven-${{ steps.m2-cache-key.outputs.yearweek }}-
       # maven build
       - name: Create m2-settings
-        uses: whelk-io/maven-settings-xml-action@9dc09b23833fa9aa7f27b63db287951856f3433d # v22
+        uses: s4u/maven-settings-action@894661b3ddae382f1ae8edbeab60987e08cf0788 #v4.0.0
         with:
           repositories: '[
             { "id": "central", "url": "https://repo1.maven.org/maven2/", "releases": { "enabled": "true" }, "snapshots": { "enabled": "false" } },
@@ -79,7 +79,6 @@ jobs:
           servers: '[
             { "id": "github", "username": "x-access-token", "password": "${{ secrets.READER_TOKEN }}" }
           ]'
-          output_file: settings.xml
       - name: Download toolchain file
         run: |
           curl https://raw.githubusercontent.com/navikt/dok-workflows/main/resources/toolchains.xml --output toolchains.xml
