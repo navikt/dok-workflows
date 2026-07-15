@@ -79,6 +79,7 @@ jobs:
           servers: '[
             { "id": "github", "username": "x-access-token", "password": "${{ secrets.READER_TOKEN }}" }
           ]'
+          githubServer: 'false'
           path: settings.xml
       - name: Download toolchain file
         run: |
