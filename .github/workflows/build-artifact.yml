@@ -39,7 +39,7 @@ jobs:
           githubServer: 'false'
           path: settings.xml
       - name: Set up JDK${{ inputs.java-version || needs.determine-java-version.outputs.java-version }} and cache dependencies
-        uses: actions/setup-java@v5
+        uses: actions/setup-java@v5.6.0
         with:
           java-version: ${{ inputs.java-version || needs.determine-java-version.outputs.java-version }}
           distribution: 'temurin'
