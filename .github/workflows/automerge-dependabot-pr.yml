@@ -22,7 +22,7 @@ on:
         description: Minimum alder på PR i dager før den automerges
         type: string
         required: false
-        default: '5'
+        default: '0'
       java-version:
         description: Java version som skal brukes til bygging. Utledes om ikke angitt
         type: string
