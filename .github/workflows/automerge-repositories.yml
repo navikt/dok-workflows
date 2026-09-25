@@ -1,0 +1,65 @@
+name: Sentral Dependabot-automerge
+
+on:
+  workflow_dispatch:
+    inputs:
+      repoer:
+        description: 'Repo-navn fra policy/repoer.yml, kommaseparert, eller alle'
+        required: true
+        default: bilag
+        type: string
+  schedule:
+    - cron: '17 7 * * 1-5'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: sentral-dependabot-automerge
+  cancel-in-progress: false
+
+jobs:
+  velg-repoer:
+    if: >-
+      github.repository == 'navikt/dok-workflows' &&
+      github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
+    runs-on: ubuntu-24.04
+    outputs:
+      matrix: ${{ steps.utvalg.outputs.matrix }}
+      har-repoer: ${{ steps.utvalg.outputs.har-repoer }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Installer YAML-leser
+        run: |
+          python3 -m venv "$RUNNER_TEMP/forvaltning-venv"
+          "$RUNNER_TEMP/forvaltning-venv/bin/python" scripts/forvaltning/repoer.py --installer-avhengigheter
+          echo "$RUNNER_TEMP/forvaltning-venv/bin" >> "$GITHUB_PATH"
+      - name: Velg bare eksplisitt aktiverte repoer
+        id: utvalg
+        env:
+          REPOER: ${{ github.event_name == 'schedule' && 'alle' || inputs.repoer }}
+        run: |
+          matrix=$(python3 scripts/forvaltning/repoer.py --repo "$REPOER" --automerge)
+          printf 'matrix=%s\n' "$matrix" >> "$GITHUB_OUTPUT"
+          if jq -e '.include | length > 0' <<< "$matrix" > /dev/null; then
+            echo 'har-repoer=true' >> "$GITHUB_OUTPUT"
+          else
+            echo 'har-repoer=false' >> "$GITHUB_OUTPUT"
+            echo 'Ingen repoer har sentral automerge aktivert.' >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+  automerge:
+    needs: velg-repoer
+    if: needs.velg-repoer.outputs.har-repoer == 'true'
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: true
+      max-parallel: 1
+      matrix: ${{ fromJSON(needs.velg-repoer.outputs.matrix) }}
+    steps:
+      - name: Sperr aktivering til automerge-actionen støtter sentral kjøring
+        run: |
+          echo "::error::Sentral automerge er ikke klar. Actionen må støtte eksplisitt målrepository og sikker merge med forventet head-SHA. Se policy/README.md."
+          exit 1

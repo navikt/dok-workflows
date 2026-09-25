@@ -1,0 +1,16 @@
+repoer:
+  bilag:
+    type: nais-app
+    required_checks:
+      - context: build / build-feature / Build app
+        integration_id: 15368
+    prod_workflows:
+      - .github/workflows/deploy-prod.yml
+    release_tags:
+      - refs/tags/*
+    automerge:
+      aktivert: false
+      semver_filter: patch,minor,unknown
+      minimum_alder_dager: 0
+      ignorerte_avhengigheter: ''
+      alltid_tillat: ''

@@ -1,13 +1,39 @@
 # Dok-workflows
-Fellesrepo med reusuable workflows i Github Actions som Team Dokumentløysingar sine applikasjonar kan kalle.
+Fellesrepo med gjenbrukbare workflows i GitHub Actions som Team Dokumentløysingar sine applikasjonar kan kalle.
+
+## Felles repository-regler
+
+[Oppsett og bruk](policy/README.md) for sentral forvaltning av branch/tag rulesets
+og Actions-policy for NAIS-appar. `bilag` er pilot. Utrulling blir starta manuelt
+og utfører endringane direkte; eksisterande workflows blir ikkje erstatta automatisk.
+Sentral Dependabot-automerge er klargjord, men sperra til automerge-actionen
+støttar trygg køyring mot eit eksplisitt målrepository.
+Vent med utrulling til sentral automerge er klar, og byt automerge-flyt ved innføringa.
+Dette er ein føresetnad for innføring, ikkje ei sperre i utrullingsskriptet.
 
 ## Tilgjengelege workflows for app
-- `build-deploy-feature.yml`: bygg og deploy feature-branch til alle dev-miljø (q*)
-- `build-deploy-main.yml`: bygg og deploy main-branch til alle dev-miljø (q*), lag release draft
-- `codeql.yml`: statisk analyse av koden med [CodeQL](https://docs.github.com/en/code-security/code-scanning/introduction-to-code-scanning/about-code-scanning-with-codeql) (query pack: `security-extended`)
-- `deploy-prod.yml`: deploy image til prod-miljø
-- `manual-deploy.yml`: manuell deploy av tag/branch til miljø
-- `automerge-dependabot-pr.yml`: automatisk merge av Dependabot-PR
+
+Dei gjenbrukbare workflowene ligg i [`.github/workflows/`](.github/workflows/).
+Appane brukar eigne caller-workflows, som vist i [`eksempel/`](eksempel/.github/workflows/).
+
+| Gjenbrukbart workflow | Eksempel på caller | Oppgåve |
+|---|---|---|
+| [`build-deploy-feature-gar.yml`](.github/workflows/build-deploy-feature-gar.yml) | [`build-deploy-feature.yml`](eksempel/.github/workflows/build-deploy-feature.yml) | Bygg feature-branch og deploy til konfigurerte dev-miljø; Dependabot-bygg blir ikkje deploya |
+| [`build-deploy-main-gar.yml`](.github/workflows/build-deploy-main-gar.yml) | [`build-deploy-main.yml`](eksempel/.github/workflows/build-deploy-main.yml) | Bygg, deploy til konfigurerte dev-miljø og lag release draft |
+| [`codeql.yml`](.github/workflows/codeql.yml) | [`codeql.yml`](eksempel/.github/workflows/codeql.yml) | Statisk analyse av Java/Kotlin med CodeQL og `security-extended` |
+| [`deploy-prod-gar.yml`](.github/workflows/deploy-prod-gar.yml) | [`deploy-prod.yml`](eksempel/.github/workflows/deploy-prod.yml) | Deploy image-taggen frå ein publisert release til prod-miljøet `p` |
+| [`automerge-dependabot-pr.yml`](.github/workflows/automerge-dependabot-pr.yml) | [`automerge-dependabot-pr.yml`](eksempel/.github/workflows/automerge-dependabot-pr.yml) | Eksisterande repo-lokal Dependabot-automerge med `GITHUB_TOKEN` og etterfølgjande bygg |
+
+Dev-miljø blir funne frå `nais/q*-config.json`. Standard cluster er `dev-fss`
+for dev og `prod-fss` for prod; caller-eksempla vel `dev-gcp` og `prod-gcp`.
+
+[`manual-deploy.yml`](eksempel/.github/workflows/manual-deploy.yml) er eit
+caller-eksempel, ikkje eit eige gjenbrukbart workflow med same namn. Det brukar
+[`deploy-nais-app-with-custom-checkout-gar.yml`](.github/workflows/deploy-nais-app-with-custom-checkout-gar.yml)
+til å hente NAIS-konfigurasjon frå valt ref og deploye eit eksisterande image med
+den valde build-taggen. Det byggjer ikkje eit nytt image.
+Eksemplet tilbyr framleis `p` og `q2`; `p` må fjernast når appen tek i bruk
+release som einaste etablerte prodsettingsflyt, slik den nye policyen føreset.
 
 ## Tilgjengelege workflows for artifakt
 - `build-artifact.yml`: bygg artifakt og lag release draft viss det er main/master-branch

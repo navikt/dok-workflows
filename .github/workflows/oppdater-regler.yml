@@ -1,0 +1,102 @@
+name: Oppdater repository-regler
+
+on:
+  workflow_dispatch:
+    inputs:
+      repoer:
+        description: 'Repo-navn fra policy/repoer.yml, kommaseparert, eller alle'
+        required: true
+        default: bilag
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: repository-forvaltning
+  cancel-in-progress: false
+
+jobs:
+  velg-repoer:
+    if: >-
+      github.repository == 'navikt/dok-workflows' &&
+      github.ref == format('refs/heads/{0}', github.event.repository.default_branch) &&
+      github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-24.04
+    outputs:
+      matrix: ${{ steps.utvalg.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Installer YAML-leser
+        run: |
+          python3 -m venv "$RUNNER_TEMP/forvaltning-venv"
+          "$RUNNER_TEMP/forvaltning-venv/bin/python" scripts/forvaltning/repoer.py --installer-avhengigheter
+          echo "$RUNNER_TEMP/forvaltning-venv/bin" >> "$GITHUB_PATH"
+      - name: Valider og velg repoer
+        id: utvalg
+        env:
+          REPOER: ${{ inputs.repoer }}
+        run: |
+          python3 scripts/forvaltning/oppdater-regler.py --valider
+          matrix=$(python3 scripts/forvaltning/repoer.py --repo "$REPOER")
+          printf 'matrix=%s\n' "$matrix" >> "$GITHUB_OUTPUT"
+
+  oppdater:
+    needs: velg-repoer
+    runs-on: ubuntu-24.04
+    environment: repository-forvaltning
+    timeout-minutes: 30
+    strategy:
+      fail-fast: true
+      max-parallel: 1
+      matrix: ${{ fromJSON(needs.velg-repoer.outputs.matrix) }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Installer YAML-leser
+        run: |
+          python3 -m venv "$RUNNER_TEMP/forvaltning-venv"
+          "$RUNNER_TEMP/forvaltning-venv/bin/python" scripts/forvaltning/repoer.py --installer-avhengigheter
+          echo "$RUNNER_TEMP/forvaltning-venv/bin" >> "$GITHUB_PATH"
+      - name: Kontroller appkonfigurasjon
+        env:
+          CLIENT_ID: ${{ vars.POLICY_APP_CLIENT_ID }}
+          POLICY_TEAM_ID: ${{ vars.POLICY_TEAM_ID }}
+          AUTOMERGE_APP_ID: ${{ vars.AUTOMERGE_APP_ID }}
+        run: |
+          test -n "$CLIENT_ID"
+          test -n "$POLICY_TEAM_ID"
+          test -n "$AUTOMERGE_APP_ID"
+      - name: Opprett kortlivet token for valgt repo
+        id: token
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        with:
+          client-id: ${{ vars.POLICY_APP_CLIENT_ID }}
+          private-key: ${{ secrets.POLICY_APP_PRIVATE_KEY }}
+          owner: navikt
+          repositories: ${{ matrix.repo }}
+          permission-administration: write
+      - name: Utfør regelendringer
+        env:
+          GH_TOKEN: ${{ steps.token.outputs.token }}
+          POLICY_TEAM_ID: ${{ vars.POLICY_TEAM_ID }}
+          AUTOMERGE_APP_ID: ${{ vars.AUTOMERGE_APP_ID }}
+          POLICY_DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+          REPO: ${{ matrix.repo }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/forvaltning/oppdater-regler.py \
+            --repo "$REPO" --apply \
+            --backup-dir "$RUNNER_TEMP/policy-backup"
+      - name: Bevar tidligere innstillinger
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: policy-backup-${{ matrix.repo }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/policy-backup/*.json
+          if-no-files-found: ignore
+          retention-days: 7
