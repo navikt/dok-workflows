@@ -1,0 +1,59 @@
+{
+  "fellesregler": [
+    "dok-baseline",
+    "dok-required-checks"
+  ],
+  "repoer": [
+    { "navn": "bilag" },
+    {
+      "navn": "brevserver-nais",
+      "tilleggsregler": ["dok-require-pr-approval"]
+    },
+    {
+      "navn": "dokarkiv",
+      "tilleggsregler": ["dok-require-pr-approval"]
+    },
+    { "navn": "dokarkivpleie" },
+    { "navn": "dokauraproxy" },
+    { "navn": "dokdigdirhendelser" },
+    { "navn": "dokdistadmin" },
+    { "navn": "dokdistavstemming" },
+    { "navn": "dokdistdittnav" },
+    { "navn": "dokdistdpi-2" },
+    { "navn": "dokdistdpo" },
+    { "navn": "dokdistdpv" },
+    { "navn": "dokdisteformidling" },
+    { "navn": "dokdistfordeling" },
+    { "navn": "dokdistkanal" },
+    { "navn": "dokdistsentralprint" },
+    { "navn": "dokmet" },
+    { "navn": "doknotifikasjon-2" },
+    { "navn": "dokopp" },
+    {
+      "navn": "dokprod",
+      "tilleggsregler": ["dok-require-pr-approval"]
+    },
+    { "navn": "dokprod-infotrygdbrev" },
+    { "navn": "doksikkerhetsnett" },
+    { "navn": "ezbrev-backend" },
+    { "navn": "foerstesidegenerator" },
+    { "navn": "freg-mq-metrics" },
+    { "navn": "joarkadmin" },
+    { "navn": "joarkhendelser" },
+    { "navn": "regoppslag" },
+    {
+      "navn": "saf",
+      "tilleggsregler": ["dok-require-pr-approval"]
+    },
+    {
+      "navn": "safselvbetjening",
+      "tilleggsregler": ["dok-require-pr-approval"]
+    },
+    { "navn": "sak" },
+    { "navn": "skanmothelse" },
+    { "navn": "skanmotovrig" },
+    { "navn": "skanmotreferansenr" },
+    { "navn": "skanmotutgaaende" },
+    { "navn": "varsel2" }
+  ]
+}
