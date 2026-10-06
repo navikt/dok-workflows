@@ -15,7 +15,7 @@ on:
 jobs:
   detect-dev-environments:
     name: Detect dev environments to deploy to
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     outputs:
       environments: ${{ steps.create-strategy-matrix.outputs.environments }}
     steps:

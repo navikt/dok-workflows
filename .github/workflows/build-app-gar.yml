@@ -33,7 +33,7 @@ jobs:
   build-app:
     name: Build app
     needs: determine-java-version
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     permissions:
       contents: read
       id-token: write

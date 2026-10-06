@@ -10,7 +10,7 @@ on:
 jobs:
   determine-java-version:
     name: Determine Java version
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     outputs:
       java-version: ${{ steps.extract-java-version.outputs.java-version }}
     steps:
