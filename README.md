@@ -1,20 +1,16 @@
- Dok-workflows
-Fellesrepo med gjenbrukbare workflows i GitHub Actions som Team Dokumentløysingar sine applikasjonar kan kalle.
+# Dok-workflows
+Repoet blir brukt av Team Dokumentløysingar og har fylgjande funksjonalitet
+- sentral styring av Github rulesets for teamet sine repo. Desse legg føringar for korleis teamet og andre kan interagere med branches og PR-ar. 
+- gjenbrukbare Github Actions-workflows som teamet sine appar kan kalle.
 
-## Felles repo-reglar
+## Utrulling av Github rulesets
+[Regelstyringsverktøyet](policy/README.md) rullar ut eit sett med reglar (Github rulesets) til repoa definert i [repoer.json](policy/repoer.json).
+Reglar som er felles for alle repo er definert i `fellesregler`. Dersom eit repo treng fleire reglar enn desse kan dei leggjast i `tilleggsregler`.
 
-[Policy-verktøyet](policy/README.md) rullar ut felles reglar
-til alle repo i [repoer.json](policy/repoer.json).
-Repo kan få eigne tilleggsreglar gjennom `tilleggsregler` i same fil.
-
-Køyr frå repo-roten med Java 25, Maven og `gh` installert:
-
+Etter det er gjort ei oppdatering i [policy-mappa](policy) kan ein køyre kommandoen under (på rotnivå) for å oppdatere rulesets i Github-repoa. Merk at Java 25, Maven og `gh` må vere installert:
 ```bash
 ./scripts/forvaltning/rull_ut_regler.sh
 ```
-
-Skriptet handterer innlogging, bygging og utrulling.
-**Det endrar GitHub direkte, utan stadfesting eller automatisk tilbakeføring.**
 
 ## Tilgjengelege workflows for app
 - `build-deploy-feature.yml`: bygg og deploy feature-branch til alle dev-miljø (q*)
