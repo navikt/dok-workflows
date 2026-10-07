@@ -16,7 +16,7 @@ jobs:
   build-and-test:
     name: Build and test artifact
     needs: determine-java-version
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     outputs:
       build-tag: ${{ steps.generate-build-tag.outputs.build-tag }}
     steps:

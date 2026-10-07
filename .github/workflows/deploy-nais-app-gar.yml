@@ -14,7 +14,7 @@ on:
 jobs:
   deploy-nais-app-gar:
     name: Deploy to ${{ inputs.nav-environment }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v7
       # sanity check
