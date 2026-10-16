@@ -7,11 +7,11 @@
     { "navn": "bilag" },
     {
       "navn": "brevserver-nais",
-      "tilleggsregler": ["dok-require-pr-approval"]
+      "tilleggsregler": ["dok-require-pr-approval", "dok-require-last-push-approval"]
     },
     {
       "navn": "dokarkiv",
-      "tilleggsregler": ["dok-require-pr-approval"]
+      "tilleggsregler": ["dok-require-pr-approval", "dok-require-last-push-approval"]
     },
     { "navn": "dokarkivpleie" },
     { "navn": "dokauraproxy" },
@@ -31,7 +31,7 @@
     { "navn": "dokopp" },
     {
       "navn": "dokprod",
-      "tilleggsregler": ["dok-require-pr-approval"]
+      "tilleggsregler": ["dok-require-pr-approval", "dok-require-last-push-approval"]
     },
     { "navn": "dokprod-infotrygdbrev" },
     { "navn": "doksikkerhetsnett" },
@@ -43,11 +43,11 @@
     { "navn": "regoppslag" },
     {
       "navn": "saf",
-      "tilleggsregler": ["dok-require-pr-approval"]
+      "tilleggsregler": ["dok-require-pr-approval", "dok-require-last-push-approval"]
     },
     {
       "navn": "safselvbetjening",
-      "tilleggsregler": ["dok-require-pr-approval"]
+      "tilleggsregler": ["dok-require-pr-approval", "dok-require-last-push-approval"]
     },
     { "navn": "sak" },
     { "navn": "skanmothelse" },
