@@ -7,22 +7,26 @@ GitHub via `gh`. Filen [repoer.json](repoer.json) angir hvilke `navikt`-repoer s
 
 Alle regelsett gjelder default branch (master/main).
 
-| Regelsett                                                                            | Krav                                                                                    | De som kan bypasse kravet |
-|--------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------|---------------------------|
-| [dok-baseline](rulesets/dok-baseline.json)                                           | PR påkrevd. Ingen sletting eller force-push som omskriver historikken.                  | Ingen                     |
-| [dok-required-checks](rulesets/dok-required-checks.json)                             | Påkrevd sjekk: `build / build-feature / Build app`.                                     | Teamet                    |
-| [dok-require-pr-approval](rulesets/dok-require-pr-approval.json) (valgfritt tillegg) | Minst én godkjenning fra et team-medlem. Dersom PR-en endres må den godkjennes på nytt. | Ingen                     |
+| Regelsett                                                                                          | Krav                                                                                    | De som kan bypasse kravet |
+|----------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------|---------------------------|
+| [dok-baseline](rulesets/dok-baseline.json)                                                         | PR påkrevd. Ingen sletting eller force-push som omskriver historikken.                  | Ingen                     |
+| [dok-required-checks](rulesets/dok-required-checks.json)                                           | Påkrevd sjekk: `build / build-feature / Build app`.                                     | Teamet                    |
+| [dok-require-pr-approval](rulesets/dok-require-pr-approval.json) (valgfritt tillegg)               | Minst én godkjenning fra et team-medlem.                                                | Ingen                     |
+| [dok-require-last-push-approval](rulesets/dok-require-last-push-approval.json) (valgfritt tillegg) | Siste push må godkjennes av noen andre enn den som pushet.                              | Teamet                    |
 
 Regelsettene i [rulesets](rulesets) vil bli opprettet eller oppdatert i et repo, basert på om et regelsett med samme navn eksisterer fra før. Eksisterende regelsett (med andre navn) vil ikke bli påvirket.
 De to regelsettene [dok-baseline](rulesets/dok-baseline.json) og [dok-required-checks](rulesets/dok-required-checks.json) er felles for alle repo.
 
 Majoriteten av teamets repoer har kun `read`-tilgang for andre i Nav. Noen få utvalgte har `write`-tilgang for `NAV IT GitHub users`, som gjør det mulig for andre i Nav å opprette og merge en PR.
-For å ha kontroll på kode som kommer utenfra teamet har disse repoene tilleggsreglene [dok-require-pr-approval](rulesets/dok-require-pr-approval.json), 
-som krever godkjenning fra et team-medlem (repoets `CODEOWNERS`) for å kunne merge PR-en. For å ta i bruk tilleggsregler, legger en til `"tilleggsregler": ["dok-require-pr-approval"]` i [repoer.json](repoer.json).
+For å ha kontroll på kode som kommer utenfra teamet har disse repoene tilleggsreglene [dok-require-pr-approval](rulesets/dok-require-pr-approval.json) og [dok-require-last-push-approval](rulesets/dok-require-last-push-approval.json), 
+som krever godkjenning fra et team-medlem (repoets `CODEOWNERS`) for å kunne merge PR-en. 
 
-### ID-er i `dok-required-checks`
+For å ta i bruk tilleggsregler, legger en til `"tilleggsregler": ["navn-på-regel-1", "navn-på-regel-2"]` i [repoer.json](repoer.json).
+
+### ID-er i regelsettene
 
 `actor_id: 3588236` angir teamet `navikt/teamdokumenthandtering`.
+
 Dersom teamets ID endres finner en den nye slik:
 
 ```bash
