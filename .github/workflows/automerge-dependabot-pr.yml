@@ -2,7 +2,16 @@ name: Automerge Dependabot PRs, build and deploy to dev, and create release draf
 
 on:
   workflow_call:
+    secrets:
+      AUTOMERGE_APP_PRIVATE_KEY:
+        description: Privatnøkkel fra miljøet dependabot-automerge ved bruk av app-token
+        required: false
     inputs:
+      use-app-token:
+        description: Bruk GitHub App til merge
+        type: boolean
+        required: false
+        default: false
       ignored-dependencies:
         description: Komma-separert liste over dependencies som ikke skal automerges
         type: string
@@ -46,6 +55,7 @@ on:
 
 jobs:
   automerge:
+    if: ${{ !inputs.use-app-token }}
     runs-on: ubuntu-24.04
     permissions:
       checks: read
@@ -71,9 +81,48 @@ jobs:
           echo "Antall mergede PRer: ${{ steps.automerge.outputs.merged-pr-count }}"
           echo "Fortsetter med build/deploy: ${{ steps.automerge.outputs.merged-pr-count != '0' }}"
 
+  automerge-app:
+    if: inputs.use-app-token && github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
+    runs-on: ubuntu-24.04
+    environment: dependabot-automerge
+    permissions: {}
+    concurrency:
+      group: dependabot-automerge-${{ github.repository }}
+      cancel-in-progress: false
+    steps:
+      - name: Create GitHub App token
+        id: app-token
+        uses: actions/create-github-app-token@v3
+        with:
+          client-id: ${{ vars.AUTOMERGE_APP_CLIENT_ID }}
+          private-key: ${{ secrets.AUTOMERGE_APP_PRIVATE_KEY }}
+          repositories: ${{ github.event.repository.name }}
+          permission-contents: write
+          permission-pull-requests: read
+          permission-checks: read
+          permission-statuses: read
+      - name: Automerge Dependabot PRs
+        id: automerge
+        uses: navikt/automerge-dependabot@main
+        with:
+          token: ${{ steps.app-token.outputs.token }}
+          minimum-age-of-pr: ${{ inputs.minimum-age-of-pr }}
+          blackout-periods: 'Sat,Sun,May 1,May 17,Dec 24-Jan 3'
+          ignored-dependencies: ${{ inputs.ignored-dependencies }}
+          semver-filter: ${{ inputs.semver-filter }}
+          always-allow: ${{ inputs.always-allow }}
+          auto-approve: 'false'
+          update-branch-before-merge: 'false'
+      - name: Automerge results
+        env:
+          MERGED_PR_COUNT: ${{ steps.automerge.outputs.merged-pr-count }}
+        run: |
+          echo "Antall mergede PRer: $MERGED_PR_COUNT"
+          echo "Bygg, deploy og release draft håndteres av repoets push-workflow."
+
   build-artifact:
     needs: automerge
-    if: needs.automerge.outputs.merged-pr-count != '0' && inputs.build-artifact
+    if: ${{ !inputs.use-app-token && needs.automerge.outputs.merged-pr-count != '0' && inputs.build-artifact }}
     uses: navikt/dok-workflows/.github/workflows/build-artifact.yml@main
     secrets: inherit
     with:
@@ -84,7 +133,7 @@ jobs:
   #Se https://github.com/orgs/community/discussions/8488
   build-main:
     needs: automerge
-    if: needs.automerge.outputs.merged-pr-count != '0' && !inputs.build-artifact
+    if: ${{ !inputs.use-app-token && needs.automerge.outputs.merged-pr-count != '0' && !inputs.build-artifact }}
     uses: navikt/dok-workflows/.github/workflows/build-app-gar.yml@main
     secrets: inherit
     with:
@@ -92,7 +141,7 @@ jobs:
 
   deploy-main:
     needs: [build-main, automerge]
-    if: needs.automerge.outputs.merged-pr-count != '0' && inputs.deploy-and-draft-release && !inputs.build-artifact
+    if: ${{ !inputs.use-app-token && needs.automerge.outputs.merged-pr-count != '0' && inputs.deploy-and-draft-release && !inputs.build-artifact }}
     uses: navikt/dok-workflows/.github/workflows/deploy-all-dev-gar.yml@main
     secrets: inherit
     with:
@@ -101,7 +150,7 @@ jobs:
 
   draft-release:
     needs: [build-main, automerge]
-    if: needs.automerge.outputs.merged-pr-count != '0' && inputs.deploy-and-draft-release && !inputs.build-artifact
+    if: ${{ !inputs.use-app-token && needs.automerge.outputs.merged-pr-count != '0' && inputs.deploy-and-draft-release && !inputs.build-artifact }}
     uses: navikt/dok-workflows/.github/workflows/release-draft-gar.yml@main
     with:
       tag: ${{ needs.build-main.outputs.tag }}
