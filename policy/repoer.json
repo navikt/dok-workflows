@@ -11,7 +11,7 @@
     },
     {
       "navn": "dokarkiv",
-      "tilleggsregler": ["dok-require-pr-approval", "dok-require-last-push-approval"]
+      "tilleggsregler": ["dok-require-pr-approval", "dok-require-last-push-approval", "dok-restrict-merge"]
     },
     { "navn": "dokarkivpleie" },
     { "navn": "dokauraproxy" },
