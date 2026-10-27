@@ -11,7 +11,7 @@ on:
         description: Bruk GitHub App til merge
         type: boolean
         required: false
-        default: false
+        default: true
       ignored-dependencies:
         description: Komma-separert liste over dependencies som ikke skal automerges
         type: string

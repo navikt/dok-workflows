@@ -7,7 +7,7 @@
     { "navn": "bilag" },
     {
       "navn": "brevserver-nais",
-      "tilleggsregler": ["dok-require-pr-approval", "dok-require-last-push-approval"]
+      "tilleggsregler": ["dok-require-pr-approval", "dok-require-last-push-approval", "dok-restrict-merge"]
     },
     {
       "navn": "dokarkiv",
@@ -23,33 +23,47 @@
     { "navn": "dokdistdpo" },
     { "navn": "dokdistdpv" },
     { "navn": "dokdisteformidling" },
-    { "navn": "dokdistfordeling" },
-    { "navn": "dokdistkanal" },
+    {
+      "navn": "dokdistfordeling",
+      "tilleggsregler": ["dok-require-pr-approval", "dok-require-last-push-approval", "dok-restrict-merge"]
+    },
+    {
+      "navn": "dokdistkanal",
+      "tilleggsregler": ["dok-require-pr-approval", "dok-require-last-push-approval", "dok-restrict-merge"]
+    },
     { "navn": "dokdistsentralprint" },
     { "navn": "dokmet" },
     { "navn": "doknotifikasjon-2" },
     { "navn": "dokopp" },
     {
       "navn": "dokprod",
-      "tilleggsregler": ["dok-require-pr-approval", "dok-require-last-push-approval"]
+      "tilleggsregler": ["dok-require-pr-approval", "dok-require-last-push-approval", "dok-restrict-merge"]
     },
     { "navn": "dokprod-infotrygdbrev" },
     { "navn": "doksikkerhetsnett" },
-    { "navn": "ezbrev-backend" },
-    { "navn": "foerstesidegenerator" },
+    {
+      "navn": "foerstesidegenerator",
+      "tilleggsregler": ["dok-require-pr-approval", "dok-require-last-push-approval", "dok-restrict-merge"]
+    },
     { "navn": "freg-mq-metrics" },
     { "navn": "joarkadmin" },
     { "navn": "joarkhendelser" },
-    { "navn": "regoppslag" },
+    {
+      "navn": "regoppslag",
+      "tilleggsregler": ["dok-require-pr-approval", "dok-require-last-push-approval", "dok-restrict-merge"]
+    },
     {
       "navn": "saf",
-      "tilleggsregler": ["dok-require-pr-approval", "dok-require-last-push-approval"]
+      "tilleggsregler": ["dok-require-pr-approval", "dok-require-last-push-approval", "dok-restrict-merge"]
     },
     {
       "navn": "safselvbetjening",
-      "tilleggsregler": ["dok-require-pr-approval", "dok-require-last-push-approval"]
+      "tilleggsregler": ["dok-require-pr-approval", "dok-require-last-push-approval", "dok-restrict-merge"]
     },
-    { "navn": "sak" },
+    {
+      "navn": "sak",
+      "tilleggsregler": ["dok-require-pr-approval", "dok-require-last-push-approval", "dok-restrict-merge"]
+    },
     { "navn": "skanmothelse" },
     { "navn": "skanmotovrig" },
     { "navn": "skanmotreferansenr" },
