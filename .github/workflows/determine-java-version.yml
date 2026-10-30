@@ -16,6 +16,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
 
       - name: Extract Java version from pom.xml
         id: extract-java-version

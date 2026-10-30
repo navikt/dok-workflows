@@ -9,6 +9,9 @@ on:
       image:
         description: "GAR image"
         value: ${{ jobs.build-app.outputs.image }}
+      source-sha:
+        description: "Source commit used for Java detection and build"
+        value: ${{ jobs.build-app.outputs.source-sha }}
     inputs:
       java-version:
         required: false
@@ -40,12 +43,14 @@ jobs:
     outputs:
       tag: ${{ inputs.should-byosbom && steps.docker-build-push-with-custom-sbom.outputs.tag || steps.docker-build-push.outputs.tag }}
       image: ${{ inputs.should-byosbom && steps.docker-build-push-with-custom-sbom.outputs.image || steps.docker-build-push.outputs.image }}
+      source-sha: ${{ github.sha }}
     steps:
       # prebuild
       - name: Checkout code
         uses: actions/checkout@v7
         # checkout gir shallow copy - fetch-depth: 0 vil tilgjengeliggjøre tags
         with:
+          ref: ${{ github.sha }}
           fetch-depth: 0
       - name: Set up JDK${{ inputs.java-version || needs.determine-java-version.outputs.java-version }}
         uses: actions/setup-java@v6
