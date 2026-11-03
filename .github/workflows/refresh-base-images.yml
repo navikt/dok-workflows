@@ -4,37 +4,36 @@ on:
   workflow_dispatch:
     inputs:
       repository:
-        description: Registered app repository to rebuild and release
-        required: true
+        description: Repository name, or leave empty to rebuild all apps in baseimage/apps.json
+        required: false
         type: string
 
 permissions:
   contents: read
 
-concurrency:
-  group: baseimage-refresh-orchestrator
-  cancel-in-progress: false
-
 jobs:
   refresh:
     runs-on: ubuntu-24.04
     environment: build-release
-    timeout-minutes: 35
-    env:
-      REPOSITORY: ${{ inputs.repository }}
     steps:
       - uses: actions/checkout@v7
+        if: inputs.repository == ''
 
-      - name: Select registered app
-        id: app
+      - name: Select repositories
+        id: repositories
+        env:
+          REQUESTED_REPOSITORY: ${{ inputs.repository }}
         run: |
-          if ! jq -e --arg repository "$REPOSITORY" \
-            'any(.apps[]; .repository == $repository)' baseimage/apps.json > /dev/null; then
-            echo "::error::Repository $REPOSITORY is not registered in baseimage/apps.json"
+          if [[ -n "$REQUESTED_REPOSITORY" ]]; then
+            repositories=$(jq -cn --arg repository "$REQUESTED_REPOSITORY" '[$repository]')
+          else
+            repositories=$(jq -c '.apps' baseimage/apps.json)
+          fi
+          if ! jq -e 'length > 0' <<< "$repositories" > /dev/null; then
+            echo "::error::No repositories selected"
             exit 1
           fi
-          echo "owner=${REPOSITORY%/*}" >> "$GITHUB_OUTPUT"
-          echo "name=${REPOSITORY#*/}" >> "$GITHUB_OUTPUT"
+          echo "repositories=$repositories" >> "$GITHUB_OUTPUT"
 
       - name: Create dispatch token
         id: app-token
@@ -42,44 +41,31 @@ jobs:
         with:
           client-id: ${{ vars.DOK_BUILD_RELEASE_APP_CLIENT_ID }}
           private-key: ${{ secrets.DOK_BUILD_RELEASE_APP_PRIVATE_KEY }}
-          owner: ${{ steps.app.outputs.owner }}
-          repositories: ${{ steps.app.outputs.name }}
+          owner: navikt
+          repositories: ${{ join(fromJSON(steps.repositories.outputs.repositories), ',') }}
           permission-actions: write
 
-      - name: Dispatch app workflow
-        id: dispatch
+      - name: Dispatch app workflows
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          REPOSITORIES: ${{ steps.repositories.outputs.repositories }}
         run: |
-          default_branch=$(gh api "repos/$REPOSITORY" --jq '.default_branch')
-          run_id=$(gh api --method POST \
-            "repos/$REPOSITORY/actions/workflows/rebuild-and-release.yml/dispatches" \
-            -H "X-GitHub-Api-Version: 2026-03-10" \
-            -f "ref=$default_branch" \
-            --jq '.workflow_run_id')
-
-          echo "run-id=$run_id" >> "$GITHUB_OUTPUT"
-          printf '## Build and release\n\nRepository: `%s`\n\nRun: %s/%s/actions/runs/%s\n' \
-            "$REPOSITORY" "$GITHUB_SERVER_URL" "$REPOSITORY" "$run_id" >> "$GITHUB_STEP_SUMMARY"
-
-      - name: Wait for build and release
-        env:
-          GH_TOKEN: ${{ steps.app-token.outputs.token }}
-          RUN_ID: ${{ steps.dispatch.outputs.run-id }}
-        run: |
-          for attempt in {1..120}; do
-            conclusion=$(gh api "repos/$REPOSITORY/actions/runs/$RUN_ID" \
-              --jq 'if .status == "completed" then .conclusion else "pending" end')
-            if [[ "$conclusion" != "pending" ]]; then
-              printf '\nBuild and release result: `%s`\n' "$conclusion" >> "$GITHUB_STEP_SUMMARY"
-              if [[ "$conclusion" != "success" ]]; then
-                echo "::error::Build and release for $REPOSITORY concluded with $conclusion"
-                exit 1
-              fi
-              exit 0
+          jq -r '.[]' <<< "$REPOSITORIES" > repositories.txt
+          printf '## Dispatched builds\n\nBuild and release results are reported in the app repositories.\n\n| Repository | Workflow run |\n| --- | --- |\n' \
+            >> "$GITHUB_STEP_SUMMARY"
+          failed=0
+          while IFS= read -r repository; do
+            repo="navikt/$repository"
+            if default_branch=$(gh api "repos/$repo" --jq '.default_branch') &&
+              run_url=$(gh api --method POST \
+                "repos/$repo/actions/workflows/rebuild-and-release.yml/dispatches" \
+                -H "X-GitHub-Api-Version: 2026-03-10" \
+                -f "ref=$default_branch" --jq '.html_url'); then
+              printf '| %s | [Open run](%s) |\n' "$repo" "$run_url" >> "$GITHUB_STEP_SUMMARY"
+            else
+              printf '| %s | Dispatch failed |\n' "$repo" >> "$GITHUB_STEP_SUMMARY"
+              echo "::error::Failed to dispatch build and release for $repo"
+              failed=1
             fi
-            sleep 15
-          done
-          echo "Build and release timed out after 30 minutes." >> "$GITHUB_STEP_SUMMARY"
-          echo "::error::Timed out waiting for build and release in $REPOSITORY"
-          exit 1
+          done < repositories.txt
+          exit "$failed"
