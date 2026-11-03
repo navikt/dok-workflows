@@ -1,8 +1,6 @@
 {
   "apps": [
-    {
-      "repository": "navikt/bilag",
-      "enabled": false
-    }
+    "bilag",
+    "dokdistadmin"
   ]
 }
