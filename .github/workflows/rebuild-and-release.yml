@@ -6,30 +6,9 @@ on:
       setup-latest-nodejs:
         required: false
         type: boolean
-        default: false
       should-byosbom:
         required: false
         type: boolean
-        default: false
-    outputs:
-      tag:
-        description: Published release and image tag
-        value: ${{ jobs.build.outputs.tag }}
-      image:
-        description: Built GAR image
-        value: ${{ jobs.build.outputs.image }}
-      source-sha:
-        description: Source commit used for the build
-        value: ${{ jobs.build.outputs.source-sha }}
-      release-url:
-        description: Published GitHub release
-        value: ${{ jobs.release.outputs.url }}
-
-permissions: {}
-
-concurrency:
-  group: baseimage-refresh-${{ github.repository }}
-  cancel-in-progress: false
 
 jobs:
   validate:
@@ -46,9 +25,6 @@ jobs:
 
   build:
     needs: validate
-    permissions:
-      contents: read
-      id-token: write
     uses: navikt/dok-workflows/.github/workflows/build-app-gar.yml@main
     with:
       setup-latest-nodejs: ${{ inputs.setup-latest-nodejs }}
@@ -59,8 +35,6 @@ jobs:
     needs: build
     runs-on: ubuntu-24.04
     environment: build-release
-    outputs:
-      url: ${{ steps.release.outputs.url }}
     steps:
       - name: Create release token
         id: app-token
@@ -68,26 +42,21 @@ jobs:
         with:
           client-id: ${{ vars.DOK_BUILD_RELEASE_APP_CLIENT_ID }}
           private-key: ${{ secrets.DOK_BUILD_RELEASE_APP_PRIVATE_KEY }}
-          owner: ${{ github.repository_owner }}
-          repositories: ${{ github.event.repository.name }}
           permission-contents: write
 
       - name: Publish new release
-        id: release
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
           BUILD_TAG: ${{ needs.build.outputs.tag }}
-          SOURCE_SHA: ${{ needs.build.outputs.source-sha }}
           RELEASE_NOTES: |
-            - Source commit: `${{ needs.build.outputs.source-sha }}`
+            - Source commit: `${{ github.sha }}`
             - Image: `${{ needs.build.outputs.image }}`
             - Build: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
           gh api --method POST "repos/$GITHUB_REPOSITORY/git/refs" \
-            -f "ref=refs/tags/$BUILD_TAG" -f "sha=$SOURCE_SHA" --silent
+            -f "ref=refs/tags/$BUILD_TAG" -f "sha=$GITHUB_SHA" --silent
           release_url=$(gh api --method POST "repos/$GITHUB_REPOSITORY/releases" \
             -f "tag_name=$BUILD_TAG" -f "name=$BUILD_TAG" -f "body=$RELEASE_NOTES" \
             -F draft=false -F prerelease=false --jq '.html_url')
 
-          echo "url=$release_url" >> "$GITHUB_OUTPUT"
           printf '## Published release\n\n%s\n\n%s\n' "$release_url" "$RELEASE_NOTES" >> "$GITHUB_STEP_SUMMARY"
