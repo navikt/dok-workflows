@@ -43,20 +43,30 @@ jobs:
           client-id: ${{ vars.DOK_BUILD_RELEASE_APP_CLIENT_ID }}
           private-key: ${{ secrets.DOK_BUILD_RELEASE_APP_PRIVATE_KEY }}
           permission-contents: write
+          permission-pull-requests: read
 
-      - name: Publish new release
+      - name: Create release tag
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
           BUILD_TAG: ${{ needs.build.outputs.tag }}
-          RELEASE_NOTES: |
-            - Source commit: `${{ github.sha }}`
-            - Image: `${{ needs.build.outputs.image }}`
-            - Build: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
           gh api --method POST "repos/$GITHUB_REPOSITORY/git/refs" \
             -f "ref=refs/tags/$BUILD_TAG" -f "sha=$GITHUB_SHA" --silent
-          release_url=$(gh api --method POST "repos/$GITHUB_REPOSITORY/releases" \
-            -f "tag_name=$BUILD_TAG" -f "name=$BUILD_TAG" -f "body=$RELEASE_NOTES" \
-            -F draft=false -F prerelease=false --jq '.html_url')
 
-          printf '## Published release\n\n%s\n\n%s\n' "$release_url" "$RELEASE_NOTES" >> "$GITHUB_STEP_SUMMARY"
+      - name: Publish release
+        id: release
+        uses: release-drafter/release-drafter@978bb0b30c5ee8cdd332ced253758157150d43f0 # 7.10.0
+        with:
+          tag: ${{ needs.build.outputs.tag }}
+          name: ${{ needs.build.outputs.tag }}
+          commitish: ${{ github.sha }}
+          footer: 'Build: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}'
+          publish: true
+          token: ${{ steps.app-token.outputs.token }}
+
+      - name: Release summary
+        env:
+          RELEASE_URL: ${{ steps.release.outputs.html_url }}
+          RELEASE_NOTES: ${{ steps.release.outputs.body }}
+        run: |
+          printf '## Published release\n\n%s\n\n%s\n' "$RELEASE_URL" "$RELEASE_NOTES" >> "$GITHUB_STEP_SUMMARY"
