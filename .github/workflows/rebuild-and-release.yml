@@ -3,6 +3,10 @@ name: Rebuild and release
 on:
   workflow_call:
     inputs:
+      nav-cluster:
+        required: false
+        type: string
+        default: prod-fss
       setup-latest-nodejs:
         required: false
         type: boolean
@@ -10,9 +14,14 @@ on:
         required: false
         type: boolean
 
+permissions:
+  contents: read
+
 jobs:
   validate:
     runs-on: ubuntu-24.04
+    outputs:
+      release-required: ${{ steps.changes.outputs.release-required }}
     steps:
       - name: Require dispatch from default branch
         env:
@@ -23,8 +32,49 @@ jobs:
             exit 1
           fi
 
+      - name: Find latest release
+        id: last-release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          release_sha=''
+          if release_tag=$(gh api "repos/$GITHUB_REPOSITORY/releases/latest" --jq '.tag_name' 2>&1); then
+            release_ref=$(jq -rn --arg ref "refs/tags/$release_tag" '$ref | @uri')
+            release_sha=$(gh api "repos/$GITHUB_REPOSITORY/commits/$release_ref" --jq '.sha')
+            if [[ ! "$release_sha" =~ ^[0-9a-f]{40}$ ]]; then
+              echo "::error::Could not resolve the latest release to a commit"
+              exit 1
+            fi
+          elif [[ "$release_tag" == *"(HTTP 404)"* ]]; then
+            # Finner ikke "latest release", tvinger ny release med tom release_tag
+            release_tag=''
+          else
+            printf '%s\n' "$release_tag" >&2
+            exit 1
+          fi
+          echo "tag=$release_tag" >> "$GITHUB_OUTPUT"
+          echo "sha=$release_sha" >> "$GITHUB_OUTPUT"
+
+      - name: Compare source with release
+        id: changes
+        env:
+          RELEASE_TAG: ${{ steps.last-release.outputs.tag }}
+          RELEASE_SHA: ${{ steps.last-release.outputs.sha }}
+          NAV_CLUSTER: ${{ inputs.nav-cluster }}
+        run: |
+          release_required=true
+          if [[ "$RELEASE_SHA" == "$GITHUB_SHA" ]]; then
+            release_required=false
+          fi
+          echo "release-required=$release_required" >> "$GITHUB_OUTPUT"
+          printf '## Production delivery\n\nSource: `%s`\n\nLatest release: `%s`\n\nNew release required: `%s`\n\nDirect-deploy cluster: `%s`\n' \
+            "$GITHUB_SHA" "${RELEASE_TAG:-none}" "$release_required" "$NAV_CLUSTER" >> "$GITHUB_STEP_SUMMARY"
+
   build:
     needs: validate
+    permissions:
+      contents: read
+      id-token: write
     uses: navikt/dok-workflows/.github/workflows/build-app-gar.yml@main
     with:
       setup-latest-nodejs: ${{ inputs.setup-latest-nodejs }}
@@ -32,7 +82,9 @@ jobs:
     secrets: inherit
 
   release:
-    needs: build
+    needs: [validate, build]
+    if: needs.validate.outputs.release-required == 'true'
+    permissions: {}
     runs-on: ubuntu-24.04
     environment: build-release
     steps:
@@ -70,3 +122,16 @@ jobs:
           RELEASE_NOTES: ${{ steps.release.outputs.body }}
         run: |
           printf '## Published release\n\n%s\n\n%s\n' "$RELEASE_URL" "$RELEASE_NOTES" >> "$GITHUB_STEP_SUMMARY"
+
+  deploy:
+    needs: [validate, build]
+    if: needs.validate.outputs.release-required == 'false'
+    permissions:
+      contents: read
+      id-token: write
+    uses: navikt/dok-workflows/.github/workflows/deploy-nais-app-gar.yml@main
+    with:
+      image: ${{ needs.build.outputs.image }}
+      nav-cluster: ${{ inputs.nav-cluster }}
+      nav-environment: p
+      checkout-ref: ${{ github.sha }}
