@@ -46,7 +46,8 @@
       "tilleggsregler": ["dok-require-pr-approval", "dok-require-last-push-approval", "dok-restrict-merge"]
     },
     { "navn": "freg-mq-metrics" },
-    { "navn": "joarkhendelser" },
+    { "navn": "joarkhendelser" },    
+    { "navn": "pdfprod" },
     {
       "navn": "regoppslag",
       "tilleggsregler": ["dok-require-pr-approval", "dok-require-last-push-approval", "dok-restrict-merge"]
