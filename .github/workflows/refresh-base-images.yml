@@ -2,7 +2,7 @@ name: Refresh base images
 
 on:
   schedule:
-    - cron: '0 7 * * 1-5'
+    - cron: '0 7 * * MON-FRI'
       timezone: Europe/Oslo
   workflow_dispatch:
     inputs:
