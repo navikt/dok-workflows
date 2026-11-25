@@ -97,7 +97,7 @@ jobs:
       - name: Build and push to GAR with custom SBOM
         if: ${{ github.actor != 'dependabot[bot]' && inputs.should-byosbom == true }}
         id: docker-build-push-with-custom-sbom
-        uses: nais/docker-build-push@v0
+        uses: nais/docker-build-push@v1
         with:
           team: teamdokumenthandtering
           pull: true
@@ -106,7 +106,7 @@ jobs:
       - name: Build and push to GAR
         if: ${{ github.actor != 'dependabot[bot]' && inputs.should-byosbom == false }}
         id: docker-build-push
-        uses: nais/docker-build-push@v0
+        uses: nais/docker-build-push@v1
         with:
           team: teamdokumenthandtering
           pull: true
